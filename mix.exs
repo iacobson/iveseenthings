@@ -47,6 +47,7 @@ defmodule IST.MixProject do
       {:surface_formatter, "~> 0.7.0"},
       {:surface_markdown, "~> 0.5"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:elixir_uuid, "~> 1.2"},
       {:ecspanse, path: "../ecspanse"}
     ]
   end

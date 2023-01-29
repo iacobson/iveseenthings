@@ -69,6 +69,41 @@ defmodule ISTWeb do
     end
   end
 
+  # surface
+  def surface_live_view do
+    quote do
+      use Surface.LiveView,
+        layout: {ISTWeb.LayoutView, :live}
+
+      unquote(view_helpers())
+    end
+  end
+
+  def surface_live_component do
+    quote do
+      use Surface.LiveComponent
+
+      unquote(view_helpers())
+    end
+  end
+
+  def surface_component do
+    quote do
+      use Surface.Component
+
+      unquote(view_helpers())
+    end
+  end
+
+  # I made this just to accomodate the `slots` option. Not sure if worth it.
+  def surface_component(opts) do
+    quote do
+      use Surface.Component, unquote(opts)
+
+      unquote(view_helpers())
+    end
+  end
+
   def router do
     quote do
       use Phoenix.Router

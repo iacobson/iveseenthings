@@ -14,10 +14,12 @@ defmodule ISTWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ISTWeb do
-    pipe_through :browser
+  live_session :user, on_mount: {ISTWeb.Hook.User, :user_status} do
+    scope "/", ISTWeb.Live do
+      pipe_through [:browser]
 
-    get "/", PageController, :index
+      live "/", Game, :new
+    end
   end
 
   # Other scopes may use custom stacks.

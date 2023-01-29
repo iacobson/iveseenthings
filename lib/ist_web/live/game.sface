@@ -1,33 +1,13 @@
 <div id="game_live_view" class="">
   <div class="tui-screen-1024-768 centered tui-border-solid cyan-168-border tui-bg-cyan-black">
     {#if @socket_connected}
-      <div id="game_live_connected" :hook="TUI">
-        <div class="tui-window">
-          <fieldset class="tui-fieldset">
-            <legend>Window</legend>
-          </fieldset>
-        </div>
-        <div class="tui-window">
-          <fieldset class="tui-fieldset">
-            <legend>Window</legend>
-          </fieldset>
-        </div>
-        <!-- Button -->
-        <button class="tui-button tui-modal-button" data-modal="modal">◄ Click ►</button>
-
-        <!-- Overlap -->
-        <div class="tui-overlap" />
-
-        <!-- Modal window -->
-        <div id="modal" class="tui-modal">
-          <div class="tui-window red-168">
-            <fieldset class="tui-fieldset">
-              <legend class="red-255 yellow-255-text">Alert</legend>
-              ...
-              <button class="tui-button tui-modal-close-button right" data-modal="modal">close</button>
-            </fieldset>
-          </div>
-        </div>
+      <div id="game_live_connected" class="absolute full-width full-height" :hook="TUI">
+        {#case @state}
+          {#match :main_menu}
+            <MainMenuComponent />
+          {#match :observer}
+            <ObserverComponent id="observer" />
+        {/case}
       </div>
     {/if}
   </div>

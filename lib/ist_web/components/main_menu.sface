@@ -1,0 +1,19 @@
+<style>
+  .scoped-content {
+  padding-top: 25%;
+  }
+</style>
+<div id="main_menu" class="full-width full-height">
+  <div class="scoped-content center content">
+    <h1>
+      <div class="center content white-text">
+        I'VE SEEN THINGS ...
+      </div>
+    </h1>
+
+    <div
+      class="tui-button center content tui-no-shadow cyan-168 cyan-255-hover white-text"
+      :on-click={JS.push("change_state", value: %{state: :observer}, target: :live_view)}
+    >OBSERVER</div>
+  </div>
+</div>

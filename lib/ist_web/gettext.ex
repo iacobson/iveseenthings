@@ -20,5 +20,5 @@ defmodule ISTWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :ist
+  use Gettext, otp_app: :iveseenthings
 end

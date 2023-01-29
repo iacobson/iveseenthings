@@ -1,5 +1,5 @@
 defmodule ISTWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :ist
+  use Phoenix.Endpoint, otp_app: :iveseenthings
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
@@ -18,7 +18,7 @@ defmodule ISTWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :ist,
+    from: :iveseenthings,
     gzip: false,
     only: ~w(assets fonts images favicon.ico robots.txt)
 

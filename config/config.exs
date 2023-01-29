@@ -11,11 +11,11 @@ config :surface, :components, [
   {Surface.Components.Form.ErrorTag, default_translator: {ISTWeb.ErrorHelpers, :translate_error}}
 ]
 
-config :ist,
+config :iveseenthings,
   namespace: IST
 
 # Configures the endpoint
-config :ist, ISTWeb.Endpoint,
+config :iveseenthings, ISTWeb.Endpoint,
   url: [host: "localhost"],
   render_errors: [view: ISTWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: IST.PubSub,

@@ -7,6 +7,10 @@
 # General application configuration
 import Config
 
+config :surface, :components, [
+  {Surface.Components.Form.ErrorTag, default_translator: {ISTWeb.ErrorHelpers, :translate_error}}
+]
+
 config :ist,
   namespace: IST
 

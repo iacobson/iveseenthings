@@ -1,9 +1,29 @@
 defmodule IST do
   @moduledoc """
-  IST keeps the contexts that define your domain
-  and business logic.
-
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
+  GenServer that coordinates the init of the game
   """
+
+  use GenServer
+
+  def child_spec(_attrs) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, []},
+      restart: :permanent
+    }
+  end
+
+  def start_link() do
+    GenServer.start_link(__MODULE__, %{})
+  end
+
+  def init(attrs) do
+    {:ok, attrs, {:continue, :start_game}}
+  end
+
+  def handle_continue(:start_game, state) do
+    # This is the only world in thig game.
+    {:ok, _token} = Ecspanse.new(IST.Game, name: IST.Game, dyn_sup: IST.DynamicSupervisor)
+    {:noreply, state}
+  end
 end

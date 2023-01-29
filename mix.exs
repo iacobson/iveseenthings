@@ -46,7 +46,8 @@ defmodule IST.MixProject do
       {:surface, "~> 0.9"},
       {:surface_formatter, "~> 0.7.0"},
       {:surface_markdown, "~> 0.5"},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:ecspanse, path: "../ecspanse"}
     ]
   end
 

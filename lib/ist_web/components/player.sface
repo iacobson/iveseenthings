@@ -9,6 +9,33 @@
           {@player.name}
         </b>
       </legend>
+      <div>
+        <span>HULL HP</span>
+        <span class="green-255-text">[h]</span>
+        <span class="tui-shortcut green-255-text">{@player.hull}</span>
+      </div>
+
+      <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">
+        <fieldset class="tui-fieldset tui-no-shadow full-width full-height scoped-player-list cyan-168-border tui-border-solid cyan-255-border-hover tui-bg-green-black">
+          <legend class="green-255-text">DEFENSES</legend>
+
+          <div>
+            <span>Shields HP</span>
+            <span class="green-255-text">[s]</span>
+            <span class="tui-shortcut green-255-text">{@player.current_shields}</span>
+          </div>
+          <div>
+            <span>Evasion</span>
+            <span class="green-255-text">[e]</span>
+            <span class="tui-shortcut green-255-text">{@player.current_evasion}</span>
+          </div>
+          <div>
+            <span>P.D. Drones</span>
+            <span class="green-255-text">[d]</span>
+            <span class="tui-shortcut green-255-text">{@player.current_drones}</span>
+          </div>
+        </fieldset>
+      </div>
     </fieldset>
   </div>
 </div>

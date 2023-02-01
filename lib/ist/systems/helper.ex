@@ -7,22 +7,22 @@ defmodule IST.Systems.Helper do
 
   def spawn_bot_entity do
     name = UUID.uuid4()
-    actor = Components.Bot
-    do_spawn_battle_ship(actor, name)
+    player = Components.Bot
+    do_spawn_battle_ship(player, name)
   end
 
-  def spawn_player_entity(name) do
-    actor = Components.Player
-    do_spawn_battle_ship(actor, name)
+  def spawn_human_entity(name) do
+    player = Components.Human
+    do_spawn_battle_ship(player, name)
   end
 
-  defp do_spawn_battle_ship(actor, name) do
+  defp do_spawn_battle_ship(player, name) do
     Ecspanse.Command.spawn_entity!(
       {Ecspanse.Entity,
        name: name,
        components: [
          {Components.BattleShip, name: name},
-         actor,
+         player,
          {Components.EnergyStorage, value: 1},
          {Components.Hull, hp: 100}
        ],

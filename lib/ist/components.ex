@@ -15,8 +15,8 @@ defmodule IST.Components do
     use Ecspanse.Component, access_mode: :entity_type
   end
 
-  defmodule Player do
-    @moduledoc "BattleShip is a player"
+  defmodule Human do
+    @moduledoc "BattleShip is a human"
     use Ecspanse.Component, access_mode: :entity_type
   end
 

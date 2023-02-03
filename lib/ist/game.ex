@@ -5,7 +5,7 @@ defmodule IST.Game do
 
   use Ecspanse.World,
     otp_app: :iveseenthings,
-    fps_limit: 60
+    fps_limit: Application.compile_env(:iveseenthings, :fps_limit)
 
   alias Ecspanse.World
 
@@ -13,5 +13,8 @@ defmodule IST.Game do
     world
     |> World.add_startup_system(IST.Systems.InitGame)
     |> World.add_frame_start_system(IST.Systems.AddOrRemoveBots)
+    |> World.add_system(IST.Systems.CountingDown)
+    |> World.add_system(IST.Systems.AddEnergy)
+    |> World.add_frame_end_system(IST.Systems.UpdateFPS)
   end
 end

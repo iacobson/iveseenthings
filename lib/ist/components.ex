@@ -227,4 +227,23 @@ defmodule IST.Components do
       end
     end
   end
+
+  # Generic
+
+  defmodule CountDown do
+    @moduledoc "Count down timer"
+    use Ecspanse.Component, state: [millisecond: nil, initial: nil]
+
+    @type t :: %__MODULE__{millisecond: non_neg_integer(), initial: non_neg_integer()}
+
+    def validate(%__MODULE__{millisecond: millisecond, initial: initial}) do
+      if is_integer(millisecond) and millisecond >= 0 and
+           is_integer(initial) and initial >= 0 do
+        :ok
+      else
+        {:error,
+         "Count down value and the initial value must be a non negative integers. Got: #{inspect(millisecond)}, #{inspect(initial)}"}
+      end
+    end
+  end
 end

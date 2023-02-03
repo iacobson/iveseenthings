@@ -24,6 +24,7 @@ defmodule ISTWeb.Components.Player do
             name: nil,
             type: nil,
             energy: nil,
+            energy_countdown: nil,
             hull: nil,
             current_evasion: nil,
             maneuvers_evasion: nil,
@@ -83,16 +84,17 @@ defmodule ISTWeb.Components.Player do
   end
 
   defp update_player(entity, player, token) do
-    {energy, hull, children} =
+    {energy, hull, countdown, children} =
       Query.select(
-        {Components.EnergyStorage, Components.Hull, Ecspanse.Component.Children},
+        {Components.EnergyStorage, Components.Hull, Components.CountDown,
+         Ecspanse.Component.Children},
         for: [entity]
       )
       |> Query.one(token)
 
     children = children.list
 
-    %Player{player | energy: energy.value, hull: hull.hp}
+    %Player{player | energy: energy.value, energy_countdown: countdown.millisecond, hull: hull.hp}
     |> update_defenses(children, token)
   end
 
@@ -116,9 +118,9 @@ defmodule ISTWeb.Components.Player do
   end
 
   defp build_player(entity, token) do
-    {player, energy, hull, children} =
+    {player, energy, hull, countdown, children} =
       Query.select(
-        {Components.BattleShip, Components.EnergyStorage, Components.Hull,
+        {Components.BattleShip, Components.EnergyStorage, Components.Hull, Components.CountDown,
          Ecspanse.Component.Children},
         for: [entity]
       )
@@ -130,6 +132,7 @@ defmodule ISTWeb.Components.Player do
       id: entity.id,
       name: String.slice(player.name, 0, 13),
       energy: energy.value,
+      energy_countdown: countdown.millisecond,
       hull: hull.hp
     }
     |> add_type(entity, token)
@@ -251,5 +254,12 @@ defmodule ISTWeb.Components.Player do
       missiles_energy_cost: cost.value,
       missiles_shields_efficiency: efficiency.percent
     })
+  end
+
+  ### template helpers
+
+  defp energy_progress(counter) do
+    counter = ceil(counter / 1000)
+    String.slice("❚❚❚", 0, counter)
   end
 end

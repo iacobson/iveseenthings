@@ -20,12 +20,14 @@ defmodule ISTWeb.Components.PlayerList do
   prop selected, :string, default: nil
 
   data players, :list, default: []
+  data fps, :decimal, default: 0.0
 
   def update(assigns, socket) do
     socket =
       socket
       |> assign(assigns)
       |> fetch_players()
+      |> update_fps()
 
     {:ok, socket}
   end
@@ -59,5 +61,10 @@ defmodule ISTWeb.Components.PlayerList do
           type: player_type
         }
     end)
+  end
+
+  defp update_fps(socket) do
+    {:ok, fps_resource} = Ecspanse.Query.fetch_resource(IST.Resources.FPS, socket.assigns.token)
+    assign(socket, fps: fps_resource.value)
   end
 end

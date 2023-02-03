@@ -24,7 +24,8 @@ defmodule IST.Systems.Helper do
          {Components.BattleShip, name: name},
          player,
          {Components.EnergyStorage, value: 1},
-         {Components.Hull, hp: 100}
+         {Components.Hull, hp: 100},
+         {Components.CountDown, millisecond: 3000, initial: 3000}
        ],
        children: [
          spawn_evasion_entity(),

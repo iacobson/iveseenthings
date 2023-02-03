@@ -9,14 +9,14 @@ defmodule IST.Systems.AddOrRemoveBots do
   alias Ecspanse.Query
 
   @impl true
-  def run(tick) do
+  def run(frame) do
     target_player_count = Application.get_env(:iveseenthings, :player_count)
 
     current_player_count =
       Query.select({Ecspanse.Entity},
         with: [IST.Components.BattleShip]
       )
-      |> Query.stream(tick.token)
+      |> Query.stream(frame.token)
       |> Enum.count()
 
     if current_player_count < target_player_count do

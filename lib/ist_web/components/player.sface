@@ -11,8 +11,14 @@
       </legend>
       <div>
         <span>HULL HP</span>
-        <span class="green-255-text">[h]</span>
-        <span class="tui-shortcut green-255-text">{@player.hull}</span>
+        <span class="orange-255-text">[h]</span>
+        <span class={"tui-shortcut", "orange-255-text": @player.hull >= 20, "red-255-text": @player.hull < 20}>{@player.hull}</span>
+      </div>
+      <div>
+        <span>ENERGY</span>
+        <span class="orange-255-text">[e]</span>
+        <span class="cyan-255-text">{energy_progress(@player.energy_countdown)}</span>
+        <span class="tui-shortcut orange-255-text">{@player.energy}</span>
       </div>
 
       <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">

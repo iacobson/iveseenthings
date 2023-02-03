@@ -13,7 +13,7 @@ defmodule ISTWeb.Live.Game do
 
   data state, :atom, default: :main_menu, values!: [:main_menu, :observer]
 
-  @fps 60
+  @fps Application.compile_env(:iveseenthings, :fps_limit)
 
   @impl true
   def mount(_params, _session, socket) do

@@ -1,6 +1,5 @@
 defmodule ISTWeb.Router do
   use ISTWeb, :router
-  import Plug.BasicAuth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -16,7 +15,7 @@ defmodule ISTWeb.Router do
   end
 
   pipeline :basic do
-    plug :basic_auth, Application.compile_env(:iveseenthings, :basic_auth)
+    plug :basic_auth_setup
   end
 
   live_session :user, on_mount: {ISTWeb.Hook.User, :user_status} do
@@ -46,5 +45,13 @@ defmodule ISTWeb.Router do
     pipe_through :basic
 
     live_dashboard "/dashboard", metrics: ISTWeb.Telemetry
+  end
+
+  # Runtime basic auth
+  def basic_auth_setup(conn, _opts) do
+    username = Application.get_env(:iveseenthings, :basic_auth)[:username]
+    password = Application.get_env(:iveseenthings, :basic_auth)[:password]
+
+    Plug.BasicAuth.basic_auth(conn, username: username, password: password)
   end
 end

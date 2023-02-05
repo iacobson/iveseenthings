@@ -47,4 +47,10 @@ if config_env() == :prod do
       port: port
     ],
     secret_key_base: secret_key_base
+
+  config :iveseenthings, :ecspanse_secret, System.get_env("ECSPANSE_SECRET")
+
+  config :iveseenthings, :basic_auth,
+    username: System.get_env("BASIC_AUTH_USER"),
+    password: System.get_env("BASIC_AUTH_PASS")
 end

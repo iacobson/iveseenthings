@@ -19,6 +19,7 @@ defmodule IST.Systems.Helper do
   defp do_spawn_battle_ship(player, name) do
     children =
       Ecspanse.Command.spawn_entities!([
+        energy_countdown_entity_spec(),
         evasion_entity_spec(),
         shields_entity_spec(),
         drones_entity_spec(),
@@ -34,11 +35,18 @@ defmodule IST.Systems.Helper do
          {Components.BattleShip, name: name},
          player,
          {Components.EnergyStorage, value: 1},
-         {Components.Hull, hp: 100},
-         {Components.CountDown, millisecond: 3000, initial: 3000}
+         {Components.Hull, hp: 100}
        ],
        children: children}
     ])
+  end
+
+  defp energy_countdown_entity_spec do
+    {Ecspanse.Entity,
+     components: [
+       Components.EnergyCountdown,
+       {Components.Countdown, millisecond: 3000, initial: 3000}
+     ]}
   end
 
   # Defenses

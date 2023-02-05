@@ -230,8 +230,12 @@ defmodule IST.Components do
 
   # Generic
 
-  defmodule CountDown do
-    @moduledoc "Count down timer"
+  defmodule Countdown do
+    @moduledoc """
+    Count down timer.
+    Because an entity may need multiple countdowns, they will often be
+    children entities.
+    """
     use Ecspanse.Component, state: [millisecond: nil, initial: nil]
 
     @type t :: %__MODULE__{millisecond: non_neg_integer(), initial: non_neg_integer()}
@@ -245,5 +249,10 @@ defmodule IST.Components do
          "Count down value and the initial value must be a non negative integers. Got: #{inspect(millisecond)}, #{inspect(initial)}"}
       end
     end
+  end
+
+  defmodule EnergyCountdown do
+    @moduledoc "Energy count down timer identifier"
+    use Ecspanse.Component, access_mode: :entity_type
   end
 end

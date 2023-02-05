@@ -3,12 +3,12 @@ defmodule IST.Systems.CountingDown do
   Counts down the time to the next action.
   """
 
-  use Ecspanse.System, lock_components: [IST.Components.CountDown]
+  use Ecspanse.System, lock_components: [IST.Components.Countdown]
   alias Ecspanse.Query
 
   @impl true
   def run(frame) do
-    Query.select({IST.Components.CountDown})
+    Query.select({IST.Components.Countdown})
     |> Query.stream(frame.token)
     |> Stream.filter(fn {counter} -> counter.millisecond > 0 end)
     |> Enum.map(fn {counter} ->

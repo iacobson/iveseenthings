@@ -32,5 +32,6 @@ defmodule IST.Game do
     world
     |> World.add_system(IST.Systems.CountingDown)
     |> World.add_system(IST.Systems.AddEnergy)
+    |> World.add_system(IST.Systems.ResetCountdown)
   end
 end

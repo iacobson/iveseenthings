@@ -84,17 +84,17 @@ defmodule ISTWeb.Components.Player do
   end
 
   defp update_player(entity, player, token) do
-    {energy, hull, countdown, children} =
+    {energy, hull, children} =
       Query.select(
-        {Components.EnergyStorage, Components.Hull, Components.CountDown,
-         Ecspanse.Component.Children},
+        {Components.EnergyStorage, Components.Hull, Ecspanse.Component.Children},
         for: [entity]
       )
       |> Query.one(token)
 
     children = children.list
 
-    %Player{player | energy: energy.value, energy_countdown: countdown.millisecond, hull: hull.hp}
+    %Player{player | energy: energy.value, hull: hull.hp}
+    |> add_energy_countdown(children, token)
     |> update_defenses(children, token)
   end
 
@@ -118,9 +118,9 @@ defmodule ISTWeb.Components.Player do
   end
 
   defp build_player(entity, token) do
-    {player, energy, hull, countdown, children} =
+    {player, energy, hull, children} =
       Query.select(
-        {Components.BattleShip, Components.EnergyStorage, Components.Hull, Components.CountDown,
+        {Components.BattleShip, Components.EnergyStorage, Components.Hull,
          Ecspanse.Component.Children},
         for: [entity]
       )
@@ -132,10 +132,10 @@ defmodule ISTWeb.Components.Player do
       id: entity.id,
       name: String.slice(player.name, 0, 13),
       energy: energy.value,
-      energy_countdown: countdown.millisecond,
       hull: hull.hp
     }
     |> add_type(entity, token)
+    |> add_energy_countdown(children, token)
     |> add_evasion(children, token)
     |> add_shields(children, token)
     |> add_drones(children, token)
@@ -150,6 +150,18 @@ defmodule ISTWeb.Components.Player do
     else
       Map.put(player, :type, "bot")
     end
+  end
+
+  def add_energy_countdown(player, children, token) do
+    {countdown} =
+      Query.select(
+        {Components.Countdown},
+        with: [Components.EnergyCountdown],
+        for: children
+      )
+      |> Query.one(token)
+
+    Map.put(player, :energy_countdown, countdown.millisecond)
   end
 
   defp add_evasion(player, children, token) do

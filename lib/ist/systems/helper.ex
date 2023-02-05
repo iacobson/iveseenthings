@@ -17,7 +17,17 @@ defmodule IST.Systems.Helper do
   end
 
   defp do_spawn_battle_ship(player, name) do
-    Ecspanse.Command.spawn_entity!(
+    children =
+      Ecspanse.Command.spawn_entities!([
+        evasion_entity_spec(),
+        shields_entity_spec(),
+        drones_entity_spec(),
+        laser_entity_spec(),
+        railgun_entity_spec(),
+        missiles_entity_spec()
+      ])
+
+    Ecspanse.Command.spawn_entities!([
       {Ecspanse.Entity,
        name: name,
        components: [
@@ -27,93 +37,74 @@ defmodule IST.Systems.Helper do
          {Components.Hull, hp: 100},
          {Components.CountDown, millisecond: 3000, initial: 3000}
        ],
-       children: [
-         spawn_evasion_entity(),
-         spawn_shields_entity(),
-         spawn_drones_entity(),
-         spawn_laser_entity(),
-         spawn_railgun_entity(),
-         spawn_missiles_entity()
-       ]}
-    )
+       children: children}
+    ])
   end
 
   # Defenses
 
-  defp spawn_evasion_entity do
-    Ecspanse.Command.spawn_entity!(
-      {Ecspanse.Entity,
-       components: [
-         Components.Defense,
-         {Components.Evasion, value: 30, maneuvers: 20},
-         {Components.EnergyCost, value: 1}
-       ]}
-    )
+  defp evasion_entity_spec do
+    {Ecspanse.Entity,
+     components: [
+       Components.Defense,
+       {Components.Evasion, value: 30, maneuvers: 20},
+       {Components.EnergyCost, value: 1}
+     ]}
   end
 
-  defp spawn_shields_entity do
-    Ecspanse.Command.spawn_entity!(
-      {Ecspanse.Entity,
-       components: [
-         Components.Defense,
-         {Components.Shields, hp: 10, boost: 15},
-         {Components.EnergyCost, value: 4}
-       ]}
-    )
+  defp shields_entity_spec do
+    {Ecspanse.Entity,
+     components: [
+       Components.Defense,
+       {Components.Shields, hp: 10, boost: 15},
+       {Components.EnergyCost, value: 4}
+     ]}
   end
 
-  defp spawn_drones_entity do
-    Ecspanse.Command.spawn_entity!(
-      {Ecspanse.Entity,
-       components: [
-         Components.Defense,
-         {Components.Drones, count: 0, missile_defense: 140, projectile_defense: 10, deploy: 1},
-         {Components.EnergyCost, value: 6}
-       ]}
-    )
+  defp drones_entity_spec do
+    {Ecspanse.Entity,
+     components: [
+       Components.Defense,
+       {Components.Drones, count: 0, missile_defense: 140, projectile_defense: 10, deploy: 1},
+       {Components.EnergyCost, value: 6}
+     ]}
   end
 
   # Weapons
 
-  defp spawn_laser_entity do
-    Ecspanse.Command.spawn_entity!(
-      {Ecspanse.Entity,
-       components: [
-         Components.Weapon,
-         Components.Laser,
-         {Components.Damage, value: 5},
-         {Components.Accuracy, value: 100},
-         {Components.ShieldsEfficiency, percent: 50},
-         {Components.EnergyCost, value: 2}
-       ]}
-    )
+  defp laser_entity_spec do
+    {Ecspanse.Entity,
+     components: [
+       Components.Weapon,
+       Components.Laser,
+       {Components.Damage, value: 5},
+       {Components.Accuracy, value: 100},
+       {Components.ShieldsEfficiency, percent: 50},
+       {Components.EnergyCost, value: 2}
+     ]}
   end
 
-  defp spawn_railgun_entity do
-    Ecspanse.Command.spawn_entity!(
-      {Ecspanse.Entity,
-       components: [
-         Components.Weapon,
-         Components.Railgun,
-         {Components.Damage, value: 10},
-         {Components.Accuracy, value: 30},
-         {Components.ShieldsEfficiency, percent: 200},
-         {Components.EnergyCost, value: 3}
-       ]}
-    )
+  defp railgun_entity_spec do
+    {Ecspanse.Entity,
+     components: [
+       Components.Weapon,
+       Components.Railgun,
+       {Components.Damage, value: 10},
+       {Components.Accuracy, value: 30},
+       {Components.ShieldsEfficiency, percent: 200},
+       {Components.EnergyCost, value: 3}
+     ]}
   end
 
-  defp spawn_missiles_entity do
-    Ecspanse.Command.spawn_entity!(
-      {Ecspanse.Entity,
-       components: [
-         Components.Weapon,
-         Components.Missiles,
-         {Components.Damage, value: 20},
-         {Components.Accuracy, value: 70},
-         {Components.ShieldsEfficiency, percent: 100},
-         {Components.EnergyCost, value: 5}
-       ]}
-    )
+  defp missiles_entity_spec do
+    {Ecspanse.Entity,
+     components: [
+       Components.Weapon,
+       Components.Missiles,
+       {Components.Damage, value: 20},
+       {Components.Accuracy, value: 70},
+       {Components.ShieldsEfficiency, percent: 100},
+       {Components.EnergyCost, value: 5}
+     ]}
   end
 end

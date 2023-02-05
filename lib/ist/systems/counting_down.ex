@@ -10,11 +10,11 @@ defmodule IST.Systems.CountingDown do
   def run(frame) do
     Query.select({IST.Components.CountDown})
     |> Query.stream(frame.token)
-    |> Ecspanse.System.execute_async(fn {counter} ->
-      if counter.millisecond > 0 do
-        new_value = max(counter.millisecond - frame.delta, 0)
-        Ecspanse.Command.update_component!(counter, %{millisecond: new_value})
-      end
+    |> Stream.filter(fn {counter} -> counter.millisecond > 0 end)
+    |> Enum.map(fn {counter} ->
+      new_value = max(counter.millisecond - frame.delta, 0)
+      {counter, %{millisecond: new_value}}
     end)
+    |> Ecspanse.Command.update_components!()
   end
 end

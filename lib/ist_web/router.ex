@@ -1,5 +1,6 @@
 defmodule ISTWeb.Router do
   use ISTWeb, :router
+  import Plug.BasicAuth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -12,6 +13,10 @@ defmodule ISTWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  pipeline :basic do
+    plug :basic_auth, Application.compile_env(:iveseenthings, :basic_auth)
   end
 
   live_session :user, on_mount: {ISTWeb.Hook.User, :user_status} do
@@ -34,13 +39,12 @@ defmodule ISTWeb.Router do
   # If your application does not have an admins-only section yet,
   # you can use Plug.BasicAuth to set up some basic authentication
   # as long as you are also using SSL (which you should anyway).
-  if Mix.env() in [:dev, :test] do
-    import Phoenix.LiveDashboard.Router
+  import Phoenix.LiveDashboard.Router
 
-    scope "/" do
-      pipe_through :browser
+  scope "/" do
+    pipe_through :browser
+    pipe_through :basic
 
-      live_dashboard "/dashboard", metrics: ISTWeb.Telemetry
-    end
+    live_dashboard "/dashboard", metrics: ISTWeb.Telemetry
   end
 end

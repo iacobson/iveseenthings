@@ -14,6 +14,7 @@ defmodule IST.Game do
     |> World.add_system_set({__MODULE__, :startup_systems})
     |> World.add_system_set({__MODULE__, :sync_systems}, run_in_state: :play)
     |> World.add_system_set({__MODULE__, :async_system}, run_in_state: :play)
+    |> World.add_frame_end_system(IST.Systems.CheckPlayersConnected)
   end
 
   def startup_systems(world) do

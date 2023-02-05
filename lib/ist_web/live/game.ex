@@ -10,6 +10,7 @@ defmodule ISTWeb.Live.Game do
 
   prop socket_connected, :boolean, default: false
   prop token, :string, default: nil
+  prop user_id, :string, default: nil
 
   data state, :atom, default: :main_menu, values!: [:main_menu, :observer]
 
@@ -21,6 +22,8 @@ defmodule ISTWeb.Live.Game do
       %{socket_connected: true} ->
         socket = Surface.Components.Context.put(socket, state: socket.assigns.state)
         send(self(), :tick)
+
+        ISTWeb.Presence.track(self(), "iveseenthings", socket.assigns.user_id, %{})
 
         {:ok, socket}
 

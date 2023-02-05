@@ -11,7 +11,8 @@ defmodule ISTWeb.Hook.User do
     # save the ECS token in a global prop
 
     with {:ok, socket} <- check_socket_connected(socket),
-         {:ok, socket} <- fetch_token(socket) do
+         {:ok, socket} <- fetch_token(socket),
+         {:ok, socket} <- assign_user_id(socket) do
       {:cont, socket}
     end
   end
@@ -39,5 +40,9 @@ defmodule ISTWeb.Hook.User do
       {:error, _} ->
         {:halt, socket}
     end
+  end
+
+  defp assign_user_id(socket) do
+    {:ok, assign(socket, user_id: UUID.uuid4())}
   end
 end

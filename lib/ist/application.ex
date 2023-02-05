@@ -12,6 +12,8 @@ defmodule IST.Application do
       ISTWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: IST.PubSub},
+      # Presence
+      ISTWeb.Presence,
       # Start the Endpoint (http/https)
       ISTWeb.Endpoint,
       # Start a worker by calling: IST.Worker.start_link(arg)

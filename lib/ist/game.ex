@@ -13,7 +13,8 @@ defmodule IST.Game do
     world
     |> World.add_system_set({__MODULE__, :startup_systems})
     |> World.add_system_set({__MODULE__, :sync_systems}, run_in_state: :play)
-    |> World.add_system_set({__MODULE__, :async_system}, run_in_state: :play)
+    |> World.add_system_set({__MODULE__, :async_event_systems}, run_in_state: :play)
+    |> World.add_system_set({__MODULE__, :async_systems}, run_in_state: :play)
     |> World.add_frame_end_system(IST.Systems.CheckPlayersConnected)
   end
 
@@ -28,10 +29,17 @@ defmodule IST.Game do
     |> World.add_frame_end_system(IST.Systems.UpdateFPS)
   end
 
-  def async_system(world) do
+  @doc "Systems triggered by user events"
+  def async_event_systems(world) do
+    world
+    |> World.add_system(IST.Systems.TargetLock)
+  end
+
+  def async_systems(world) do
     world
     |> World.add_system(IST.Systems.CountingDown)
     |> World.add_system(IST.Systems.AddEnergy)
     |> World.add_system(IST.Systems.ResetCountdown)
+    |> World.add_system(IST.Systems.CheckTargetAlive, after: [IST.Systems.TargetLock])
   end
 end

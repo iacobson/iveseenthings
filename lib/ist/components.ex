@@ -71,6 +71,14 @@ defmodule IST.Components do
     end
   end
 
+  defmodule Target do
+    @moduledoc "Targeted enemy BattleShip"
+
+    use Ecspanse.Component, state: [entity: nil]
+
+    @type t :: %__MODULE__{entity: Ecspanse.Entity.t()}
+  end
+
   # Defenses
 
   defmodule Defense do

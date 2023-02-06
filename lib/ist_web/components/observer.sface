@@ -7,7 +7,9 @@
         </div>
         <div class="col s6">
           <div class="row">
-            <div class="col s12">TARGET LOCK</div>
+            <div class="col s12">
+              <TargetLockComponent :if={@target_player} id="target_locked" targeted={@target_player} />
+            </div>
           </div>
           <div class="row">
             <div class="col s12">TARGETED BY</div>

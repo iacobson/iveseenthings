@@ -41,5 +41,6 @@ defmodule IST.Game do
     |> World.add_system(IST.Systems.AddEnergy)
     |> World.add_system(IST.Systems.ResetCountdown)
     |> World.add_system(IST.Systems.CheckTargetAlive, after: [IST.Systems.TargetLock])
+    |> World.add_system(IST.Systems.BotAction)
   end
 end

@@ -48,7 +48,8 @@ defmodule IST.MixProject do
       {:surface_markdown, "~> 0.5"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:elixir_uuid, "~> 1.2"},
-      {:ecspanse, git: "https://github.com/iacobson/ecspanse.git", branch: "main"}
+      {:ecspanse, path: "../ecspanse"}
+      # {:ecspanse, git: "https://github.com/iacobson/ecspanse.git", branch: "main"}
     ]
   end
 

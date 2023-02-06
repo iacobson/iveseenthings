@@ -1,6 +1,6 @@
 <div id="player full-width">
   <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">
-    <fieldset class="tui-fieldset tui-no-shadow full-width full-height scoped-player-list cyan-168-border cyan-255-border-hover tui-bg-cyan-black">
+    <fieldset class="tui-fieldset tui-no-shadow full-width full-height cyan-168-border cyan-255-border-hover tui-bg-cyan-black">
       <legend class="center purple-255-text">
         <b>
           <b class={"yellow-168-text": @player.type == "bot", "orange-168-text": @player.type == "human"}>
@@ -22,7 +22,7 @@
       </div>
 
       <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">
-        <fieldset class="tui-fieldset tui-no-shadow full-width full-height scoped-player-list cyan-168-border tui-border-solid cyan-255-border-hover tui-bg-green-black">
+        <fieldset class="tui-fieldset tui-no-shadow full-width full-height green-168-border tui-border-solid green-255-border-hover tui-bg-green-black">
           <legend class="green-255-text">DEFENSES</legend>
 
           <div>

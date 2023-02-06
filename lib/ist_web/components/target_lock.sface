@@ -1,0 +1,27 @@
+<div id="target_locked full-width">
+  <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">
+    <fieldset class="tui-fieldset tui-no-shadow full-width full-height cyan-168-border cyan-255-border-hover tui-bg-cyan-black">
+      <legend class="center purple-255-text">
+        <b>TARGET LOCKED</b>
+      </legend>
+      <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">
+        <fieldset class="tui-fieldset tui-no-shadow full-width full-height blue-168-border tui-border-solid blue-255-border-hover tui-bg-blue-black">
+          <legend class="blue-255-text">
+            <b>
+              <b class={"yellow-168-text": @enemy.type == "bot", "orange-168-text": @enemy.type == "human"}>
+                [{String.first(@enemy.type)}]
+              </b>
+              {@enemy.name}
+            </b>
+          </legend>
+
+          <div>
+            <span>ENERGY</span>
+            <span class="orange-255-text">[e]</span>
+            <span class="tui-shortcut orange-255-text">{@enemy.energy}</span>
+          </div>
+        </fieldset>
+      </div>
+    </fieldset>
+  </div>
+</div>

@@ -13,7 +13,7 @@ defmodule IST.Systems.CountingDown do
     |> Stream.filter(fn {counter} -> counter.millisecond > 0 end)
     |> Enum.map(fn {counter} ->
       new_value = max(counter.millisecond - frame.delta, 0)
-      {counter, %{millisecond: new_value}}
+      {counter, millisecond: new_value}
     end)
     |> Ecspanse.Command.update_components!()
   end

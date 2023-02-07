@@ -21,7 +21,7 @@ defmodule IST.Systems.ResetCountdown do
     end)
     |> Stream.map(& &1.final)
     |> Enum.map(fn counter ->
-      {counter, %{millisecond: counter.initial}}
+      {counter, millisecond: counter.initial}
     end)
     |> Ecspanse.Command.update_components!()
   end

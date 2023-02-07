@@ -51,7 +51,7 @@ defmodule IST.Systems.AddEnergy do
       )
       |> Query.stream(token)
       |> Enum.map(fn {energy} ->
-        {energy, %{value: energy.value + 1}}
+        {energy, value: energy.value + 1}
       end)
       |> Ecspanse.Command.update_components!()
     end

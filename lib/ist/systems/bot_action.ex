@@ -53,7 +53,8 @@ defmodule IST.Systems.BotAction do
 
       Ecspanse.event(
         frame.token,
-        {IST.Events.AcquireTargetLock, hunter_id: entity.id, target_id: random_target.id}
+        {IST.Events.AcquireTargetLock, entity.id,
+         hunter_id: entity.id, target_id: random_target.id}
       )
     end
   end

@@ -263,6 +263,7 @@ defmodule IST.Components do
     @moduledoc "Energy countdown timer identifier"
     use Ecspanse.Component, access_mode: :entity_type
   end
+
   defmodule EvasionCountdown do
     @moduledoc "Evasion countdown timer identifier"
     use Ecspanse.Component, access_mode: :entity_type

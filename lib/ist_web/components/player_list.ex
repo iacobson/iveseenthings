@@ -64,7 +64,9 @@ defmodule ISTWeb.Components.PlayerList do
   end
 
   defp update_fps(socket) do
-    {:ok, fps_resource} = Ecspanse.Query.fetch_resource(IST.Resources.FPS, socket.assigns.token)
+    {:ok, fps_resource} =
+      Ecspanse.Query.fetch_resource(Ecspanse.Resource.FPS, socket.assigns.token)
+
     assign(socket, fps: fps_resource.value)
   end
 end

@@ -26,13 +26,14 @@ defmodule IST.Game do
   def sync_systems(world) do
     world
     |> World.add_frame_start_system(IST.Systems.AddOrRemoveBots)
-    |> World.add_frame_end_system(IST.Systems.UpdateFPS)
+    |> World.add_frame_end_system(Ecspanse.System.TrackFPS)
   end
 
   @doc "Systems triggered by user events"
   def async_event_systems(world) do
     world
     |> World.add_system(IST.Systems.TargetLock)
+    |> World.add_system(IST.Systems.EvasiveManeuvers)
   end
 
   def async_systems(world) do

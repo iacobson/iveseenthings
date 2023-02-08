@@ -8,7 +8,6 @@ defmodule IST.Systems.InitGame do
   @impl true
   def run(frame) do
     {:ok, world_state} = Ecspanse.Query.fetch_resource(Ecspanse.Resource.State, frame.token)
-    Ecspanse.Command.update_resource!(world_state, %{value: :play})
-    Ecspanse.Command.insert_resource!({IST.Resources.FPS, value: 0.0})
+    Ecspanse.Command.update_resource!({world_state, value: :play})
   end
 end

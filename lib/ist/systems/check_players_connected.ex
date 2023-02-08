@@ -13,9 +13,9 @@ defmodule IST.Systems.CheckPlayersConnected do
     {:ok, world_state} = Ecspanse.Query.fetch_resource(Ecspanse.Resource.State, frame.token)
 
     if users == %{} do
-      Ecspanse.Command.update_resource!(world_state, %{value: :pause})
+      Ecspanse.Command.update_resource!({world_state, value: :pause})
     else
-      Ecspanse.Command.update_resource!(world_state, %{value: :play})
+      Ecspanse.Command.update_resource!({world_state, value: :play})
     end
   end
 end

@@ -10,11 +10,20 @@ defmodule IST.Events do
     The user can open fire on the target.
     """
 
-     use Ecspanse.Event, fields: [:hunter_id, :target_id]
+    use Ecspanse.Event, fields: [:hunter_id, :target_id]
 
-  @type t :: %__MODULE__{
-          hunter_id: Ecspanse.Entity.id(),
-          target_id: Ecspanse.Entity.id()
-        }
+    @type t :: %__MODULE__{
+            hunter_id: Ecspanse.Entity.id(),
+            target_id: Ecspanse.Entity.id()
+          }
+  end
+
+  defmodule PerformEvasiveManeuvers do
+    @moduledoc """
+    Performs an evasive maneuvers.
+    Increases the ship's evasion.
+    """
+
+    use Ecspanse.Event, fields: [:ship_id]
   end
 end

@@ -60,7 +60,7 @@ defmodule IST.Systems.Helper do
     {Ecspanse.Entity,
      components: [
        Components.Defense,
-       {Components.Evasion, value: 0, maneuvers: 20},
+       {Components.Evasion, value: 0, maneuvers: 10},
        {Components.EnergyCost, value: 1}
      ],
      children: children}

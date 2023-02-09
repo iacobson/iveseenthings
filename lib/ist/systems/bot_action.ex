@@ -44,12 +44,15 @@ defmodule IST.Systems.BotAction do
   end
 
   defp action(entity, frame, enemy_entities) do
-    case IST.Util.odds(target: 100, evasive_maneuvers: 80) do
+    case IST.Util.odds(target: 100, evasive_maneuvers: 30, boost_shields: 80) do
       :target ->
         acquire_target_lock(entity, frame, enemy_entities)
 
       :evasive_maneuvers ->
         perform_evasive_maneuvers(entity, frame)
+
+      :boost_shields ->
+        boost_shields(entity, frame)
     end
   end
 
@@ -69,6 +72,13 @@ defmodule IST.Systems.BotAction do
     Ecspanse.event(
       frame.token,
       {IST.Events.PerformEvasiveManeuvers, entity.id, ship_id: entity.id}
+    )
+  end
+
+  defp boost_shields(entity, frame) do
+    Ecspanse.event(
+      frame.token,
+      {IST.Events.BoostShields, entity.id, ship_id: entity.id}
     )
   end
 end

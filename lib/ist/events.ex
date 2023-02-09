@@ -26,4 +26,12 @@ defmodule IST.Events do
 
     use Ecspanse.Event, fields: [:ship_id]
   end
+
+  defmodule BoostShields do
+    @moduledoc """
+    Boost energy shields.
+    """
+
+    use Ecspanse.Event, fields: [:ship_id]
+  end
 end

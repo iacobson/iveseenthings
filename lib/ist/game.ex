@@ -25,6 +25,7 @@ defmodule IST.Game do
 
   def sync_systems(world) do
     world
+    |> World.add_frame_start_system(IST.Systems.ResetCountdown)
     |> World.add_frame_start_system(IST.Systems.AddOrRemoveBots)
     |> World.add_frame_end_system(Ecspanse.System.TrackFPS)
   end
@@ -34,6 +35,7 @@ defmodule IST.Game do
     world
     |> World.add_system(IST.Systems.TargetLock)
     |> World.add_system(IST.Systems.EvasiveManeuvers)
+    |> World.add_system(IST.Systems.BoostShields)
   end
 
   def async_systems(world) do
@@ -41,7 +43,6 @@ defmodule IST.Game do
     |> World.add_system(IST.Systems.CountingDown)
     |> World.add_system(IST.Systems.AddEnergy)
     |> World.add_system(IST.Systems.ReduceEvasion)
-    |> World.add_system(IST.Systems.ResetCountdown)
     |> World.add_system(IST.Systems.CheckTargetAlive, after: [IST.Systems.TargetLock])
     |> World.add_system(IST.Systems.BotAction)
   end

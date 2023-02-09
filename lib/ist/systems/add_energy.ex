@@ -13,14 +13,14 @@ defmodule IST.Systems.AddEnergy do
     frame.event_stream
     |> Stream.filter(fn
       %ComponentUpdated{
-        final: %IST.Components.Countdown{millisecond: 0}
+        updated: %IST.Components.Countdown{millisecond: 0}
       } ->
         true
 
       _ ->
         false
     end)
-    |> Stream.map(& &1.final)
+    |> Stream.map(& &1.updated)
     |> Enum.map(fn counter ->
       Query.get_component_entity(counter, frame.token)
     end)

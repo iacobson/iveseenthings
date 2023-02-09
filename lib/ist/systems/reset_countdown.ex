@@ -17,7 +17,7 @@ defmodule IST.Systems.ResetCountdown do
       frame.event_stream
       |> Stream.filter(fn
         %ComponentUpdated{
-          final: %IST.Components.Countdown{millisecond: 0}
+          updated: %IST.Components.Countdown{millisecond: 0}
         } ->
           true
 
@@ -25,7 +25,7 @@ defmodule IST.Systems.ResetCountdown do
           false
       end)
       |> Stream.map(fn component_updated ->
-        Query.get_component_entity(component_updated.final, frame.token)
+        Query.get_component_entity(component_updated.updated, frame.token)
       end)
 
     # Make sure that the countdown was not updated meanwhile

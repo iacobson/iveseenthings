@@ -44,7 +44,11 @@ defmodule ISTWeb.Router do
     pipe_through :browser
     pipe_through :basic
 
-    live_dashboard "/dashboard", metrics: ISTWeb.Telemetry
+    live_dashboard "/dashboard",
+      metrics: ISTWeb.Telemetry,
+      additional_pages: [
+        flame_on: FlameOn.DashboardPage
+      ]
   end
 
   # Runtime basic auth

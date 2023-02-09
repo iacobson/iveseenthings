@@ -40,7 +40,7 @@ defmodule IST.MixProject do
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.18"},
+      {:gettext, "~> 0.21", override: true},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:surface, "~> 0.9"},
@@ -48,6 +48,7 @@ defmodule IST.MixProject do
       {:surface_markdown, "~> 0.5"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:elixir_uuid, "~> 1.2"},
+      {:flame_on, git: "https://github.com/DockYard/flame_on.git", branch: "main"},
       {:ecspanse, path: "../ecspanse"}
       # {:ecspanse, git: "https://github.com/iacobson/ecspanse.git", branch: "main"}
     ]

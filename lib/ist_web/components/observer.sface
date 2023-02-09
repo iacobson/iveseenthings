@@ -12,7 +12,15 @@
             </div>
           </div>
           <div class="row">
-            <div class="col s12">TARGETED BY</div>
+            <div class="col s12">
+              <TargetedByComponent
+                :if={@selected_player}
+                id="targeted_by"
+                select_player_event="select_player"
+                selected={@selected_player}
+                player={@selected_player}
+              />
+            </div>
           </div>
         </div>
       </div>

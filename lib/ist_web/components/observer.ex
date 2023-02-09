@@ -8,6 +8,7 @@ defmodule ISTWeb.Components.Observer do
   alias ISTWeb.Components.Player, as: PlayerComponent
   alias ISTWeb.Components.PlayerList, as: PlayerListComponent
   alias ISTWeb.Components.TargetLock, as: TargetLockComponent
+  alias ISTWeb.Components.TargetedBy, as: TargetedByComponent
 
   prop tick, :string, from_context: :tick
   prop state, :string, from_context: :state

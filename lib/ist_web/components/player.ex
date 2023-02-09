@@ -272,6 +272,7 @@ defmodule ISTWeb.Components.Player do
 
   defp energy_progress(counter) do
     counter = ceil(counter / 1000)
+    counter = 4 - counter
     String.slice("❚❚❚", 0, counter)
   end
 end

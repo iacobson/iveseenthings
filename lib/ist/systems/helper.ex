@@ -25,7 +25,7 @@ defmodule IST.Systems.Helper do
         drones_entity_spec(),
         laser_entity_spec(),
         railgun_entity_spec(),
-        missiles_entity_spec()
+        missile_entity_spec()
       ])
 
     Ecspanse.Command.spawn_entities!([
@@ -119,11 +119,11 @@ defmodule IST.Systems.Helper do
      ]}
   end
 
-  defp missiles_entity_spec do
+  defp missile_entity_spec do
     {Ecspanse.Entity,
      components: [
        Components.Weapon,
-       Components.Missiles,
+       Components.Missile,
        {Components.Damage, value: 20},
        {Components.Accuracy, value: 70},
        {Components.ShieldsEfficiency, percent: 100},

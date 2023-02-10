@@ -20,7 +20,7 @@ defmodule IST.Events do
 
   defmodule PerformEvasiveManeuvers do
     @moduledoc """
-    Performs an evasive maneuvers.
+    Performs an evasive maneuvers, if enough energy is available.
     Increases the ship's evasion.
     """
 
@@ -29,9 +29,39 @@ defmodule IST.Events do
 
   defmodule BoostShields do
     @moduledoc """
-    Boost energy shields.
+    Boost energy shields, if enough energy is available.
     """
 
     use Ecspanse.Event, fields: [:ship_id]
+  end
+
+  defmodule FireWeapon do
+    @moduledoc """
+    Fires a weapon, if enough energy is available.
+    The weapon should be one of :laser | :railgun | :missile
+
+    The enemy fired upon should be the one in the ship's target lock.
+    """
+
+    use Ecspanse.Event, fields: [:weapon, :ship_id]
+  end
+
+  defmodule DealDamage do
+    @moduledoc """
+    Deals damage to a ship.
+
+
+    Damage type can be :laser | :railgun | :missile
+    """
+
+    use Ecspanse.Event,
+      fields: [
+        :hunter_id,
+        :target_id,
+        :damage_type,
+        :damage_value,
+        :accuracy,
+        :shields_efficiency
+      ]
   end
 end

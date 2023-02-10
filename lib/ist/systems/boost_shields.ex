@@ -11,17 +11,17 @@ defmodule IST.Systems.BoostShields do
     ]
 
   alias Ecspanse.Query
-  alias IST.Events.BoostShields
+  alias IST.Events.BoostShields, as: BoostEvent
 
   @impl true
   def run(frame) do
     entities =
       frame.event_stream
       |> Stream.filter(fn
-        %BoostShields{} -> true
+        %BoostEvent{} -> true
         _ -> false
       end)
-      |> Enum.map(fn %BoostShields{ship_id: id} ->
+      |> Enum.map(fn %BoostEvent{ship_id: id} ->
         Ecspanse.Entity.build(id)
       end)
 

@@ -133,8 +133,8 @@ defmodule IST.Components do
 
   defmodule Drones do
     @moduledoc """
-    Point defense drones. They are used to protect the ship from missiles and projectiles.
-    By default, the drones offer a better protection against missiles than rasilguns.
+    Point defense drones. They are used to protect the ship from missile and projectiles.
+    By default, the drones offer a better protection against missile than rasilguns.
     More drones can be deployed in the same time with the Drone Deploy action.
     If the hull takes any damage from one shot, one drone is destroyed.
     The drone defense is compared with the weapon's accuracy.
@@ -185,7 +185,7 @@ defmodule IST.Components do
     use Ecspanse.Component, access_mode: :entity_type
   end
 
-  defmodule Missiles do
+  defmodule Missile do
     @moduledoc "Missile weapon"
     use Ecspanse.Component, access_mode: :entity_type
   end

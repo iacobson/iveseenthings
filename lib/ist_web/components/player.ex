@@ -45,10 +45,10 @@ defmodule ISTWeb.Components.Player do
             railgun_accuracy: nil,
             railgun_energy_cost: nil,
             railgun_shields_efficiency: nil,
-            missiles_damage: nil,
-            missiles_accuracy: nil,
-            missiles_energy_cost: nil,
-            missiles_shields_efficiency: nil
+            missile_damage: nil,
+            missile_accuracy: nil,
+            missile_energy_cost: nil,
+            missile_shields_efficiency: nil
 
   def update(assigns, socket) do
     socket =
@@ -141,7 +141,7 @@ defmodule ISTWeb.Components.Player do
     |> add_drones(children, token)
     |> add_laser(children, token)
     |> add_railgun(children, token)
-    |> add_missiles(children, token)
+    |> add_missile(children, token)
   end
 
   defp add_type(player, entity, token) do
@@ -250,21 +250,21 @@ defmodule ISTWeb.Components.Player do
     })
   end
 
-  defp add_missiles(player, children, token) do
+  defp add_missile(player, children, token) do
     {damage, accuracy, efficiency, cost} =
       Query.select(
         {Components.Damage, Components.Accuracy, Components.ShieldsEfficiency,
          Components.EnergyCost},
-        with: [Components.Weapon, Components.Missiles],
+        with: [Components.Weapon, Components.Missile],
         for: children
       )
       |> Query.one(token)
 
     Map.merge(player, %{
-      missiles_damage: damage.value,
-      missiles_accuracy: accuracy.value,
-      missiles_energy_cost: cost.value,
-      missiles_shields_efficiency: efficiency.percent
+      missile_damage: damage.value,
+      missile_accuracy: accuracy.value,
+      missile_energy_cost: cost.value,
+      missile_shields_efficiency: efficiency.percent
     })
   end
 

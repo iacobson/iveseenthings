@@ -36,6 +36,7 @@ defmodule IST.Game do
     |> World.add_system(IST.Systems.TargetLock)
     |> World.add_system(IST.Systems.EvasiveManeuvers)
     |> World.add_system(IST.Systems.BoostShields)
+    |> World.add_system(IST.Systems.FireWeapon)
   end
 
   def async_systems(world) do
@@ -45,5 +46,6 @@ defmodule IST.Game do
     |> World.add_system(IST.Systems.ReduceEvasion)
     |> World.add_system(IST.Systems.CheckTargetAlive, after: [IST.Systems.TargetLock])
     |> World.add_system(IST.Systems.BotAction)
+    |> World.add_system(IST.Systems.DealDamage)
   end
 end

@@ -29,18 +29,35 @@ defmodule ISTWeb.Components.TargetedBy do
   end
 
   defp fetch_targeting_enemies(socket) do
-    targeting_enemeies =
+    entity = Ecspanse.Entity.build(socket.assigns.player)
+
+    targeting_ship_entities =
+      Query.list_parents(entity, socket.assigns.token)
+      |> Stream.filter(fn entity ->
+        Query.is_type?(entity, Components.Target, socket.assigns.token)
+      end)
+      |> Stream.map(fn entity ->
+        Query.list_parents(entity, socket.assigns.token)
+      end)
+      |> Enum.concat()
+      |> Enum.to_list()
+
+    if Enum.any?(targeting_ship_entities) do
+      assign_targeting_enemies(socket, targeting_ship_entities)
+    else
+      assign(socket, targeting_enemies: [])
+    end
+  end
+
+  defp assign_targeting_enemies(socket, targeting_ship_entities) do
+    targeting_enemies =
       Query.select(
-        {Entity, Components.BattleShip, Components.Target,
-         opt: Components.Human, opt: Components.Bot}
+        {Entity, Components.BattleShip, opt: Components.Human, opt: Components.Bot},
+        for: targeting_ship_entities
       )
       |> Query.stream(socket.assigns.token)
-      |> Stream.filter(fn
-        {_entity, _battle_ship, target, _human, _bot} ->
-          target.entity.id == socket.assigns.player
-      end)
       |> Stream.map(fn
-        {entity, battle_ship, _target, human, bot} ->
+        {entity, battle_ship, human, bot} ->
           player_type =
             case {human, bot} do
               {%Components.Human{}, nil} -> "human"
@@ -54,6 +71,6 @@ defmodule ISTWeb.Components.TargetedBy do
           }
       end)
 
-    assign(socket, targeting_enemies: targeting_enemeies)
+    assign(socket, targeting_enemies: targeting_enemies)
   end
 end

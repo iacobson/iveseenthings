@@ -40,13 +40,16 @@ defmodule IST.Systems.FireWeapon do
     entities = Enum.map(events, fn %{entity: entity} -> entity end)
 
     Query.select(
-      {Ecspanse.Entity, IST.Components.EnergyStorage, IST.Components.Target,
-       Ecspanse.Component.Children},
+      {
+        Ecspanse.Entity,
+        IST.Components.EnergyStorage,
+        Ecspanse.Component.Children
+      },
       with: [IST.Components.BattleShip],
       for: entities
     )
     |> Query.stream(token)
-    |> Stream.map(fn {ship_entity, energy, target, children} ->
+    |> Stream.map(fn {ship_entity, energy, children} ->
       weapon_type = Enum.find(events, fn %{entity: entity} -> entity == ship_entity end).weapon
       weapon_module = Map.fetch!(@weapons, weapon_type)
 
@@ -63,10 +66,16 @@ defmodule IST.Systems.FireWeapon do
           token
         )
 
+      target_entity =
+        children.list
+        |> Enum.find(fn entity ->
+          Query.is_type?(entity, IST.Components.Target, token)
+        end)
+
       %{
         ship_energy: energy,
         ship_entity: ship_entity,
-        target: target,
+        target_entity: target_entity,
         weapon_entity: weapon_entity,
         weapon_type: weapon_type,
         energy_cost: energy_cost
@@ -74,44 +83,51 @@ defmodule IST.Systems.FireWeapon do
     end)
     |> Stream.filter(fn %{
                           ship_energy: ship_energy,
-                          energy_cost: energy_cost
+                          energy_cost: energy_cost,
+                          target_entity: target_entity
                         } ->
-      ship_energy.value >= energy_cost.value
+      ship_energy.value >= energy_cost.value && not is_nil(target_entity)
     end)
     |> Enum.map(fn %{
                      ship_energy: ship_energy,
                      ship_entity: ship_entity,
-                     target: target,
+                     target_entity: target_entity,
                      weapon_entity: weapon_entity,
                      weapon_type: weapon_type,
                      energy_cost: energy_cost
                    } ->
-      {:ok, {damage, accuracy, efficiency}} =
-        Ecspanse.Query.fetch_components(
-          weapon_entity,
-          {IST.Components.Damage, IST.Components.Accuracy, IST.Components.ShieldsEfficiency},
+      with {:ok, {damage, accuracy, efficiency}} <-
+             Ecspanse.Query.fetch_components(
+               weapon_entity,
+               {IST.Components.Damage, IST.Components.Accuracy, IST.Components.ShieldsEfficiency},
+               token
+             ),
+           {:ok, target_children} <-
+             Query.fetch_component(target_entity, Ecspanse.Component.Children, token),
+           # Alaways need to check if the target is still alive
+           [target_ship_entity] <- target_children.list do
+        # using random uuid as key
+        # the issuer of the event is not important in this case
+        Ecspanse.event(
+          {
+            IST.Events.DealDamage,
+            UUID.uuid4(),
+            hunter_id: ship_entity.id,
+            target_id: target_ship_entity.id,
+            damage_type: weapon_type,
+            damage_value: damage.value,
+            accuracy: accuracy.value,
+            shields_efficiency: efficiency.percent
+          },
           token
         )
 
-      # using random uuid as key
-      # the issuer of the event is not important in this case
-      Ecspanse.event(
-        {
-          IST.Events.DealDamage,
-          UUID.uuid4(),
-          hunter_id: ship_entity.id,
-          target_id: target.entity.id,
-          damage_type: weapon_type,
-          damage_value: damage.value,
-          accuracy: accuracy.value,
-          shields_efficiency: efficiency.percent
-        },
-        token
-      )
+        update_ship_energy = {ship_energy, value: ship_energy.value - energy_cost.value}
 
-      update_ship_energy = {ship_energy, value: ship_energy.value - energy_cost.value}
-
-      [update_ship_energy]
+        [update_ship_energy]
+      else
+        _ -> []
+      end
     end)
     |> List.flatten()
     |> Ecspanse.Command.update_components!()

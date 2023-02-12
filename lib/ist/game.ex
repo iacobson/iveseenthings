@@ -33,7 +33,7 @@ defmodule IST.Game do
   @doc "Systems triggered by user events"
   def async_event_systems(world) do
     world
-    |> World.add_system(IST.Systems.TargetLock)
+    |> World.add_system(IST.Systems.TargetLock, after: [IST.Systems.CheckTargetAlive])
     |> World.add_system(IST.Systems.EvasiveManeuvers)
     |> World.add_system(IST.Systems.BoostShields)
     |> World.add_system(IST.Systems.FireWeapon)
@@ -44,7 +44,7 @@ defmodule IST.Game do
     |> World.add_system(IST.Systems.CountingDown)
     |> World.add_system(IST.Systems.AddEnergy)
     |> World.add_system(IST.Systems.ReduceEvasion)
-    |> World.add_system(IST.Systems.CheckTargetAlive, after: [IST.Systems.TargetLock])
+    |> World.add_system(IST.Systems.CheckTargetAlive)
     |> World.add_system(IST.Systems.BotAction)
     |> World.add_system(IST.Systems.DealDamage)
   end

@@ -72,11 +72,17 @@ defmodule IST.Components do
   end
 
   defmodule Target do
-    @moduledoc "Targeted enemy BattleShip"
+    @moduledoc """
+    The entity of this type is storing the targeted enemy as child.
+    That means that the targeted enemy can check all the Target type parents to find the entity that is targeting it.
 
-    use Ecspanse.Component, state: [entity: nil]
+    Attention: The logic relays on the fact the the entity of type Target has a single child (a BattleShip), and a single parent (a BattleShip).
+    If the entity type Target has no child, it should be despawned. So when a BattleShip has a Target type child, it guarantees the
+    child of the Target type is a BattleShip.
 
-    @type t :: %__MODULE__{entity: Ecspanse.Entity.t()}
+    """
+
+    use Ecspanse.Component, access_mode: :entity_type
   end
 
   # Defenses

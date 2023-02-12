@@ -5,6 +5,8 @@ defmodule ISTWeb.Components.Observer do
   """
   use ISTWeb, :surface_live_component
 
+  alias Ecspanse.Query
+
   alias ISTWeb.Components.Player, as: PlayerComponent
   alias ISTWeb.Components.PlayerList, as: PlayerListComponent
   alias ISTWeb.Components.TargetLock, as: TargetLockComponent
@@ -40,14 +42,16 @@ defmodule ISTWeb.Components.Observer do
       player_id ->
         entity = Ecspanse.Entity.build(player_id)
 
-        target =
-          Ecspanse.Query.select({IST.Components.Target}, for: [entity])
-          |> Ecspanse.Query.one(socket.assigns.token)
-
-        case target do
-          {%IST.Components.Target{entity: target_entity}} ->
-            assign(socket, target_player: target_entity.id)
-
+        with children when is_list(children) and length(children) > 0 <-
+               Query.list_children(entity, socket.assigns.token),
+             %Ecspanse.Entity{} = target_entity <-
+               Enum.find(children, fn child ->
+                 Query.is_type?(child, IST.Components.Target, socket.assigns.token)
+               end),
+             # Alaways need to check if the target is still alive
+             [target_ship_entity] <- Query.list_children(target_entity, socket.assigns.token) do
+          assign(socket, target_player: target_ship_entity.id)
+        else
           _ ->
             assign(socket, target_player: nil)
         end

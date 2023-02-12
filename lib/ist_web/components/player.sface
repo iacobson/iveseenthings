@@ -15,6 +15,15 @@
         <span class={"tui-shortcut", "orange-255-text": @player.hull >= 20, "red-255-text": @player.hull < 20}>{@player.hull}</span>
       </div>
       <div>
+        <span>LEVEL (next:{@player.next_level_up_points - @player.current_level_up_points})</span>
+        <span class="">[L]</span>
+        <span class="tui-shortcut">{@player.level}</span>
+      </div>
+      <div>
+        <span>POINTS</span>
+        <span class="tui-shortcut">{@player.points}</span>
+      </div>
+      <div>
         <span>ENERGY</span>
         <span class="orange-255-text">[e]</span>
         <span class="cyan-255-text">{energy_progress(@player.energy_countdown)}</span>

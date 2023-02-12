@@ -28,6 +28,7 @@ defmodule IST.Game do
     |> World.add_frame_start_system(IST.Systems.AddOrRemoveBots)
     |> World.add_frame_end_system(Ecspanse.System.TrackFPS)
     |> World.add_frame_end_system(IST.Systems.ResetCountdown)
+    |> World.add_frame_end_system(IST.Systems.DestroyShip)
   end
 
   @doc "Systems triggered by user events"
@@ -47,5 +48,6 @@ defmodule IST.Game do
     |> World.add_system(IST.Systems.CheckTargetAlive)
     |> World.add_system(IST.Systems.BotAction)
     |> World.add_system(IST.Systems.DealDamage)
+    |> World.add_system(IST.Systems.LevelUp)
   end
 end

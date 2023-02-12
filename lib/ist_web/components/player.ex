@@ -12,13 +12,13 @@ defmodule ISTWeb.Components.Player do
   alias Ecspanse.Entity
   alias IST.Components
 
-  prop tick, :string, from_context: :tick
-  prop state, :string, from_context: :state
-  prop token, :string, from_context: :token
+  prop(tick, :string, from_context: :tick)
+  prop(state, :string, from_context: :state)
+  prop(token, :string, from_context: :token)
 
   @doc "The BattleShip entity ID"
-  prop selected, :string, default: nil
-  data player, :struct, default: %{id: nil}
+  prop(selected, :string, default: nil)
+  data(player, :struct, default: %{id: nil})
 
   defstruct id: nil,
             name: nil,
@@ -26,6 +26,10 @@ defmodule ISTWeb.Components.Player do
             energy: nil,
             energy_countdown: nil,
             hull: nil,
+            points: nil,
+            level: nil,
+            current_level_up_points: nil,
+            next_level_up_points: nil,
             current_evasion: nil,
             maneuvers_evasion: nil,
             maneuvers_evasion_energy_cost: nil,
@@ -84,18 +88,33 @@ defmodule ISTWeb.Components.Player do
   end
 
   defp update_player(entity, player, token) do
-    {energy, hull, children} =
+    res =
       Query.select(
-        {Components.EnergyStorage, Components.Hull, Ecspanse.Component.Children},
+        {Components.EnergyStorage, Components.Hull, Components.Level,
+         Ecspanse.Component.Children},
         for: [entity]
       )
       |> Query.one(token)
 
-    children = children.list
+    case res do
+      {energy, hull, level, children} ->
+        children = children.list
 
-    %Player{player | energy: energy.value, hull: hull.hp}
-    |> add_energy_countdown(children, token)
-    |> update_defenses(children, token)
+        %Player{
+          player
+          | energy: energy.value,
+            hull: hull.hp,
+            level: level.value,
+            points: level.points,
+            current_level_up_points: level.current_level_up_points,
+            next_level_up_points: level.next_level_up_points
+        }
+        |> add_energy_countdown(children, token)
+        |> update_defenses(children, token)
+
+      _ ->
+        player
+    end
   end
 
   defp update_defenses(player, children, token) do
@@ -114,13 +133,16 @@ defmodule ISTWeb.Components.Player do
 
       {_entity, _, _, %Components.Drones{count: drones}}, player ->
         %Player{player | current_drones: drones}
+
+      _, player ->
+        player
     end)
   end
 
   defp build_player(entity, token) do
-    {player, energy, hull, children} =
+    {player, energy, hull, level, children} =
       Query.select(
-        {Components.BattleShip, Components.EnergyStorage, Components.Hull,
+        {Components.BattleShip, Components.EnergyStorage, Components.Hull, Components.Level,
          Ecspanse.Component.Children},
         for: [entity]
       )
@@ -132,7 +154,11 @@ defmodule ISTWeb.Components.Player do
       id: entity.id,
       name: String.slice(player.name, 0, 13),
       energy: energy.value,
-      hull: hull.hp
+      hull: hull.hp,
+      level: level.value,
+      points: level.points,
+      current_level_up_points: level.current_level_up_points,
+      next_level_up_points: level.next_level_up_points
     }
     |> add_type(entity, token)
     |> add_energy_countdown(children, token)

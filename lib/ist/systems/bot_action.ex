@@ -45,9 +45,9 @@ defmodule IST.Systems.BotAction do
 
   defp action(entity, frame, enemy_entities) do
     case IST.Util.odds(
-           target: 100,
-           evasive_maneuvers: 30,
-           boost_shields: 80,
+           target: 150,
+           evasive_maneuvers: 60,
+           boost_shields: 120,
            fire_laser: 40,
            fire_railgun: 60,
            fire_missile: 100

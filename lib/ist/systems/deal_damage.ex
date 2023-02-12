@@ -5,6 +5,9 @@ defmodule IST.Systems.DealDamage do
   - hull takes damage
 
 
+  The hunter takes points for the damage dealt. There is a multiplier for the target's level.
+
+
   ATTENTION! A target can take multiple damage events in the same frame, from different enemies.
   Each target needs to handle a list of events, which makes this system more complex and less efficient.
   """
@@ -12,7 +15,8 @@ defmodule IST.Systems.DealDamage do
   use Ecspanse.System,
     lock_components: [
       IST.Components.Shields,
-      IST.Components.Hull
+      IST.Components.Hull,
+      IST.Components.Level
     ]
 
   alias Ecspanse.Query
@@ -26,8 +30,10 @@ defmodule IST.Systems.DealDamage do
         %DamageEvent{} -> true
         _ -> false
       end)
-      |> Enum.map(fn %DamageEvent{target_id: target_id} = event ->
-        Map.from_struct(event) |> Map.put(:target_entity, Ecspanse.Entity.build(target_id))
+      |> Enum.map(fn %DamageEvent{target_id: target_id, hunter_id: hunter_id} = event ->
+        Map.from_struct(event)
+        |> Map.put(:target_entity, Ecspanse.Entity.build(target_id))
+        |> Map.put(:hunter_entity, Ecspanse.Entity.build(hunter_id))
       end)
 
     if Enum.any?(events) do
@@ -49,12 +55,12 @@ defmodule IST.Systems.DealDamage do
     target_entities = Enum.map(events, fn %{target_entity: entity} -> entity end)
 
     Query.select(
-      {Ecspanse.Entity, IST.Components.Hull, Ecspanse.Component.Children},
+      {Ecspanse.Entity, IST.Components.Hull, IST.Components.Level, Ecspanse.Component.Children},
       with: [IST.Components.BattleShip],
       for: target_entities
     )
     |> Query.stream(token)
-    |> Stream.map(fn {target_entity, hull, children} ->
+    |> Stream.map(fn {target_entity, hull, target_level, children} ->
       event = Enum.find(events, fn %{target_entity: entity} -> entity == target_entity end)
 
       {shields} =
@@ -65,7 +71,19 @@ defmodule IST.Systems.DealDamage do
 
       update_shields_hp = {shields, hp: new_shields_hp}
       update_hull_hp = {hull, hp: max(hull.hp - remaining_damage, 0)}
-      [update_shields_hp, update_hull_hp]
+
+      {:ok, hunter_level} =
+        Query.fetch_component(event.hunter_entity, IST.Components.Level, token)
+
+      modifier = target_level.value
+      add_points = min(hull.hp, remaining_damage) * modifier
+
+      update_points =
+        {hunter_level,
+         points: hunter_level.points + add_points,
+         current_level_up_points: hunter_level.current_level_up_points + add_points}
+
+      [update_shields_hp, update_hull_hp, update_points]
     end)
     |> Enum.to_list()
     |> List.flatten()

@@ -40,7 +40,6 @@ defmodule ISTWeb.Components.TargetedBy do
         Query.list_parents(entity, socket.assigns.token)
       end)
       |> Enum.concat()
-      |> Enum.to_list()
 
     if Enum.any?(targeting_ship_entities) do
       assign_targeting_enemies(socket, targeting_ship_entities)

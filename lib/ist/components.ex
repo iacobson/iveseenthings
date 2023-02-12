@@ -85,6 +85,38 @@ defmodule IST.Components do
     use Ecspanse.Component, access_mode: :entity_type
   end
 
+  defmodule Level do
+    @moduledoc """
+    The player levels up while accumulating points.
+    The base is the base for Fibo calculation of level-up
+    """
+
+    use Ecspanse.Component,
+      state: [
+        value: nil,
+        points: 0,
+        current_level_up_points: 0,
+        next_level_up_points: 100,
+        base: 100
+      ]
+
+    @type t :: %__MODULE__{
+            value: pos_integer(),
+            points: non_neg_integer(),
+            current_level_up_points: pos_integer(),
+            next_level_up_points: pos_integer(),
+            base: pos_integer()
+          }
+
+    def validate(%__MODULE__{value: value, points: points}) do
+      if is_integer(value) and value >= 1 && points >= 0 do
+        :ok
+      else
+        {:error, "Level must be a positive integer. And points must be non-negative.}"}
+      end
+    end
+  end
+
   # Defenses
 
   defmodule Defense do

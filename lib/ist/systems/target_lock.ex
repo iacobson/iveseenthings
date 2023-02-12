@@ -28,6 +28,11 @@ defmodule IST.Systems.TargetLock do
           target: Ecspanse.Entity.build(event.target_id)
         }
       end)
+      |> Stream.filter(fn %{hunter: hunter, target: target} ->
+        # Validate if the hunter and target exist
+        Query.has_component?(hunter, IST.Components.BattleShip, frame.token) &&
+          Query.has_component?(target, IST.Components.BattleShip, frame.token)
+      end)
       |> Enum.to_list()
 
     # remove existing targets

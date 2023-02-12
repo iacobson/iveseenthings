@@ -16,6 +16,11 @@
           </legend>
 
           <div>
+            <span>LEVEL</span>
+            <span class="">[L]</span>
+            <span class="tui-shortcut">{@enemy.level}</span>
+          </div>
+          <div>
             <span>ENERGY</span>
             <span class="orange-255-text">[e]</span>
             <span class="tui-shortcut orange-255-text">{@enemy.energy}</span>

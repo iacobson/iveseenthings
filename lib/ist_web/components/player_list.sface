@@ -21,7 +21,7 @@
           )}
         >
           <b class={"yellow-168-text": player.type == "bot", "orange-168-text": player.type == "human"}>
-            [{String.first(player.type)}]
+            [{String.first(player.type)}<b class="white-text">L{player.level}]</b>
           </b>
           {player.name}
           <input type="radio" name="player_list" checked={player.id == @selected}>

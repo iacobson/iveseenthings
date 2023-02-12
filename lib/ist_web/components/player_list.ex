@@ -12,15 +12,15 @@ defmodule ISTWeb.Components.PlayerList do
   alias IST.Components
   alias Phoenix.LiveView.JS
 
-  prop tick, :string, from_context: :tick
-  prop state, :string, from_context: :state
-  prop token, :string, from_context: :token
+  prop(tick, :string, from_context: :tick)
+  prop(state, :string, from_context: :state)
+  prop(token, :string, from_context: :token)
 
-  prop select_player_event, :event
-  prop selected, :string, default: nil
+  prop(select_player_event, :event)
+  prop(selected, :string, default: nil)
 
-  data players, :list, default: []
-  data fps, :decimal, default: 0.0
+  data(players, :list, default: [])
+  data(fps, :decimal, default: 0.0)
 
   def update(assigns, socket) do
     socket =
@@ -45,10 +45,13 @@ defmodule ISTWeb.Components.PlayerList do
   end
 
   defp get_all_players(token) do
-    Query.select({Entity, Components.BattleShip, opt: Components.Human, opt: Components.Bot})
+    Query.select(
+      {Entity, Components.BattleShip, Components.Level,
+       opt: Components.Human, opt: Components.Bot}
+    )
     |> Query.stream(token)
     |> Stream.map(fn
-      {entity, battle_ship, human, bot} ->
+      {entity, battle_ship, level, human, bot} ->
         player_type =
           case {human, bot} do
             {%Components.Human{}, nil} -> "human"
@@ -58,9 +61,12 @@ defmodule ISTWeb.Components.PlayerList do
         %{
           id: entity.id,
           name: String.slice(battle_ship.name, 0, 13),
-          type: player_type
+          type: player_type,
+          level: level.value,
+          points: level.points
         }
     end)
+    |> Enum.sort_by(& &1.points, &>=/2)
   end
 
   defp update_fps(socket) do

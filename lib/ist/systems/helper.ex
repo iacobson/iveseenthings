@@ -35,7 +35,8 @@ defmodule IST.Systems.Helper do
          {Components.BattleShip, name: name},
          player,
          {Components.EnergyStorage, value: 1},
-         {Components.Hull, hp: 100}
+         {Components.Hull, hp: 100},
+         {Components.Level, points: 0, value: 1, next_level_up_points: 100}
        ],
        children: children}
     ])

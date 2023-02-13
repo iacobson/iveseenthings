@@ -37,6 +37,7 @@ defmodule IST.Game do
     |> World.add_system(IST.Systems.TargetLock, after: [IST.Systems.CheckTargetAlive])
     |> World.add_system(IST.Systems.EvasiveManeuvers)
     |> World.add_system(IST.Systems.BoostShields)
+    |> World.add_system(IST.Systems.SpawnDrone)
     |> World.add_system(IST.Systems.FireWeapon)
   end
 

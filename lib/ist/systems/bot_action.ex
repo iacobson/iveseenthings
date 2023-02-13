@@ -46,11 +46,12 @@ defmodule IST.Systems.BotAction do
   defp action(entity, frame, enemy_entities) do
     case IST.Util.odds(
            target: 150,
-           evasive_maneuvers: 80,
-           boost_shields: 100,
-           fire_laser: 40,
-           fire_railgun: 60,
-           fire_missile: 100
+           evasive_maneuvers: 100,
+           boost_shields: 80,
+           spawn_drone: 50,
+           fire_laser: 90,
+           fire_railgun: 70,
+           fire_missile: 50
          ) do
       :target ->
         acquire_target_lock(entity, frame, enemy_entities)
@@ -60,6 +61,9 @@ defmodule IST.Systems.BotAction do
 
       :boost_shields ->
         boost_shields(entity, frame)
+
+      :spawn_drone ->
+        spawn_drone(entity, frame)
 
       :fire_laser ->
         fire_laser(entity, frame)
@@ -94,6 +98,13 @@ defmodule IST.Systems.BotAction do
   defp boost_shields(entity, frame) do
     Ecspanse.event(
       {IST.Events.BoostShields, entity.id, ship_id: entity.id},
+      frame.token
+    )
+  end
+
+  defp spawn_drone(entity, frame) do
+    Ecspanse.event(
+      {IST.Events.SpawnDrone, entity.id, ship_id: entity.id},
       frame.token
     )
   end

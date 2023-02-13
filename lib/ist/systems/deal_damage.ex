@@ -15,6 +15,7 @@ defmodule IST.Systems.DealDamage do
   use Ecspanse.System,
     lock_components: [
       IST.Components.Shields,
+      IST.Components.Drones,
       IST.Components.Hull,
       IST.Components.Level
     ]
@@ -63,28 +64,35 @@ defmodule IST.Systems.DealDamage do
     |> Stream.map(fn {target_entity, hull, target_level, children} ->
       event = Enum.find(events, fn %{target_entity: entity} -> entity == target_entity end)
 
-      evasion_entity =
-        Enum.find(children.list, fn entity ->
-          Query.has_component?(entity, IST.Components.Evasion, token)
-        end)
+      do_deal_damage(event, hull, target_level, children.list, token)
+    end)
+    |> Enum.to_list()
+    |> List.flatten()
+    |> Ecspanse.Command.update_components!()
+  end
 
-      {:ok, evasion} = Query.fetch_component(evasion_entity, IST.Components.Evasion, token)
+  defp do_deal_damage(event, hull, target_level, children_entities, token) do
+    evasion_entity =
+      Enum.find(children_entities, fn entity ->
+        Query.has_component?(entity, IST.Components.Evasion, token)
+      end)
 
+    {:ok, evasion} = Query.fetch_component(evasion_entity, IST.Components.Evasion, token)
+
+    drone_entity =
+      Enum.find(children_entities, fn entity ->
+        Query.has_component?(entity, IST.Components.Drones, token)
+      end)
+
+    {:ok, drones} = Query.fetch_component(drone_entity, IST.Components.Drones, token)
+
+    if hits_the_target?(evasion, event) and pass_the_drones?(drones, event) do
       shields_entity =
-        Enum.find(children.list, fn entity ->
+        Enum.find(children_entities, fn entity ->
           Query.has_component?(entity, IST.Components.Shields, token)
         end)
 
       {:ok, shields} = Query.fetch_component(shields_entity, IST.Components.Shields, token)
-
-      do_deal_damage(event, evasion, shields, hull, target_level, token)
-    end)
-    |> Enum.concat()
-    |> Ecspanse.Command.update_components!()
-  end
-
-  defp do_deal_damage(event, evasion, shields, hull, target_level, token) do
-    if hits_the_target?(evasion, event) do
       {new_shields_hp, remaining_damage} = deal_shield_damage(shields, event)
 
       update_shields_hp = {shields, hp: new_shields_hp}
@@ -94,7 +102,9 @@ defmodule IST.Systems.DealDamage do
       add_points = min(hull.hp, remaining_damage) * modifier
       update_points = add_hunter_points(event, add_points, token)
 
-      [update_shields_hp, update_hull_hp, update_points]
+      update_drones = destroy_a_drone(remaining_damage, drones)
+
+      [update_shields_hp, update_hull_hp, update_points, update_drones] |> Enum.reject(&is_nil/1)
     else
       []
     end
@@ -110,6 +120,29 @@ defmodule IST.Systems.DealDamage do
     end
   end
 
+  # the Point Defense Drone can intercept missiles and railgun shots
+  defp pass_the_drones?(drones, %{damage_type: :railgun} = event) do
+    case IST.Util.odds(
+           stop: drones.projectile_defense * drones.count,
+           hit: event.accuracy
+         ) do
+      :hit -> true
+      :stop -> false
+    end
+  end
+
+  defp pass_the_drones?(drones, %{damage_type: :missile} = event) do
+    case IST.Util.odds(
+           stop: drones.missile_defense * drones.count,
+           hit: event.accuracy
+         ) do
+      :hit -> true
+      :stop -> false
+    end
+  end
+
+  defp pass_the_drones?(_drones, _event), do: true
+
   # weapon shield efficeincy is a percentage
   defp deal_shield_damage(shields, event) do
     efficiency = event.shields_efficiency / 100
@@ -119,6 +152,15 @@ defmodule IST.Systems.DealDamage do
       max_damage > shields.hp -> {0, event.damage_value - round(shields.hp / efficiency)}
       max_damage < shields.hp -> {shields.hp - round(event.damage_value * efficiency), 0}
       max_damage == shields.hp -> {0, 0}
+    end
+  end
+
+  # destroy a drone if the ship hull receives any damage
+  defp destroy_a_drone(damage, drones) do
+    if damage > 0 and drones.count > 0 do
+      {drones, count: drones.count - 1}
+    else
+      nil
     end
   end
 

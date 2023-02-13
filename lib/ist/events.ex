@@ -35,6 +35,14 @@ defmodule IST.Events do
     use Ecspanse.Event, fields: [:ship_id]
   end
 
+  defmodule SpawnDrone do
+    @moduledoc """
+    Spawns a new point defense drone.
+    """
+
+    use Ecspanse.Event, fields: [:ship_id]
+  end
+
   defmodule FireWeapon do
     @moduledoc """
     Fires a weapon, if enough energy is available.

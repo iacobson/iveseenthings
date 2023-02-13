@@ -63,31 +63,51 @@ defmodule IST.Systems.DealDamage do
     |> Stream.map(fn {target_entity, hull, target_level, children} ->
       event = Enum.find(events, fn %{target_entity: entity} -> entity == target_entity end)
 
-      {shields} =
-        Query.select({IST.Components.Shields}, with: [IST.Components.Defense], for: children.list)
-        |> Query.one(token)
+      evasion_entity =
+        Enum.find(children.list, fn entity ->
+          Query.has_component?(entity, IST.Components.Evasion, token)
+        end)
 
+      {:ok, evasion} = Query.fetch_component(evasion_entity, IST.Components.Evasion, token)
+
+      shields_entity =
+        Enum.find(children.list, fn entity ->
+          Query.has_component?(entity, IST.Components.Shields, token)
+        end)
+
+      {:ok, shields} = Query.fetch_component(shields_entity, IST.Components.Shields, token)
+
+      do_deal_damage(event, evasion, shields, hull, target_level, token)
+    end)
+    |> Enum.concat()
+    |> Ecspanse.Command.update_components!()
+  end
+
+  defp do_deal_damage(event, evasion, shields, hull, target_level, token) do
+    if hits_the_target?(evasion, event) do
       {new_shields_hp, remaining_damage} = deal_shield_damage(shields, event)
 
       update_shields_hp = {shields, hp: new_shields_hp}
       update_hull_hp = {hull, hp: max(hull.hp - remaining_damage, 0)}
 
-      {:ok, hunter_level} =
-        Query.fetch_component(event.hunter_entity, IST.Components.Level, token)
-
       modifier = target_level.value
       add_points = min(hull.hp, remaining_damage) * modifier
-
-      update_points =
-        {hunter_level,
-         points: hunter_level.points + add_points,
-         current_level_up_points: hunter_level.current_level_up_points + add_points}
+      update_points = add_hunter_points(event, add_points, token)
 
       [update_shields_hp, update_hull_hp, update_points]
-    end)
-    |> Enum.to_list()
-    |> List.flatten()
-    |> Ecspanse.Command.update_components!()
+    else
+      []
+    end
+  end
+
+  defp hits_the_target?(evasion, event) do
+    case IST.Util.odds(
+           miss: evasion.value,
+           hit: event.accuracy
+         ) do
+      :hit -> true
+      :miss -> false
+    end
   end
 
   # weapon shield efficeincy is a percentage
@@ -100,5 +120,13 @@ defmodule IST.Systems.DealDamage do
       max_damage < shields.hp -> {shields.hp - round(event.damage_value * efficiency), 0}
       max_damage == shields.hp -> {0, 0}
     end
+  end
+
+  defp add_hunter_points(event, points, token) do
+    {:ok, hunter_level} = Query.fetch_component(event.hunter_entity, IST.Components.Level, token)
+
+    {hunter_level,
+     points: hunter_level.points + points,
+     current_level_up_points: hunter_level.current_level_up_points + points}
   end
 end

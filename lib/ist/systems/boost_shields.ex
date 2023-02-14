@@ -15,8 +15,12 @@ defmodule IST.Systems.BoostShields do
 
   @impl true
   def run(frame) do
+    Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
+  end
+
+  def do_run(events, frame) do
     entities =
-      frame.event_stream
+      events
       |> Stream.filter(fn
         %BoostEvent{} -> true
         _ -> false

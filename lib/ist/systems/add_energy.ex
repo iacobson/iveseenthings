@@ -10,7 +10,11 @@ defmodule IST.Systems.AddEnergy do
 
   @impl true
   def run(frame) do
-    frame.event_stream
+    Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
+  end
+
+  defp do_run(events, frame) do
+    events
     |> Stream.filter(fn
       %ComponentUpdated{
         updated: %IST.Components.Countdown{millisecond: 0}

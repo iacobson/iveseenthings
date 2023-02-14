@@ -19,8 +19,12 @@ defmodule IST.Systems.LevelUp do
 
   @impl true
   def run(frame) do
+    Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
+  end
+
+  defp do_run(events, frame) do
     ship_entities =
-      frame.event_stream
+      events
       |> Stream.filter(fn
         %Ecspanse.Event.ComponentUpdated{
           updated: %IST.Components.Level{
@@ -61,7 +65,7 @@ defmodule IST.Systems.LevelUp do
       level_update =
         {level,
          value: level_value,
-         current_level_up_points: 0,
+         current_level_up_points: level.current_level_up_points - level.next_level_up_points,
          next_level_up_points: IST.Util.fibo_calculate(level.base, level_value)}
 
       hull_update = {hull, hp: hull.hp + 15 * level_value}

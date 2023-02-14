@@ -6,10 +6,6 @@ defmodule IST.Systems.DealDamage do
 
 
   The hunter takes points for the damage dealt. There is a multiplier for the target's level.
-
-
-  ATTENTION! A target can take multiple damage events in the same frame, from different enemies.
-  Each target needs to handle a list of events, which makes this system more complex and less efficient.
   """
 
   use Ecspanse.System,
@@ -25,8 +21,12 @@ defmodule IST.Systems.DealDamage do
 
   @impl true
   def run(frame) do
+    Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
+  end
+
+  defp do_run(events, frame) do
     events =
-      frame.event_stream
+      events
       |> Stream.filter(fn
         %DamageEvent{} -> true
         _ -> false
@@ -38,18 +38,8 @@ defmodule IST.Systems.DealDamage do
       end)
 
     if Enum.any?(events) do
-      group_damage(events, frame.token)
+      deal_damage(events, frame.token)
     end
-  end
-
-  # partition the damage events by target
-  # a batch of updates should not update the same target twice
-  defp group_damage([], _token), do: :ok
-
-  defp group_damage(events, token) do
-    current_events = Enum.uniq_by(events, fn %{target_id: target_id} -> target_id end)
-    deal_damage(current_events, token)
-    group_damage(events -- current_events, token)
   end
 
   defp deal_damage(events, token) do

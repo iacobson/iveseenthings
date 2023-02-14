@@ -8,8 +8,12 @@ defmodule IST.Systems.DestroyShip do
 
   @impl true
   def run(frame) do
+    Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
+  end
+
+  defp do_run(events, frame) do
     ship_entities =
-      frame.event_stream
+      events
       |> Stream.filter(fn
         %Ecspanse.Event.ComponentUpdated{updated: %IST.Components.Hull{hp: 0}} -> true
         _ -> false

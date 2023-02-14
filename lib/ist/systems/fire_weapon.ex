@@ -21,8 +21,12 @@ defmodule IST.Systems.FireWeapon do
 
   @impl true
   def run(frame) do
+    Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
+  end
+
+  defp do_run(events, frame) do
     events =
-      frame.event_stream
+      events
       |> Stream.filter(fn
         %FireEvent{} -> true
         _ -> false
@@ -106,12 +110,13 @@ defmodule IST.Systems.FireWeapon do
              Query.fetch_component(target_entity, Ecspanse.Component.Children, token),
            # Alaways need to check if the target is still alive
            [target_ship_entity] <- target_children.list do
-        # using random uuid as key
-        # the issuer of the event is not important in this case
+        # Use the target as event key.
+        # We want damage events for the same target to be processed in separate batches
+        # to avoid race conditions
         Ecspanse.event(
           {
             IST.Events.DealDamage,
-            UUID.uuid4(),
+            target_ship_entity.id,
             hunter_id: ship_entity.id,
             target_id: target_ship_entity.id,
             damage_type: weapon_type,

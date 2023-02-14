@@ -16,8 +16,12 @@ defmodule IST.Systems.TargetLock do
 
   @impl true
   def run(frame) do
+    Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
+  end
+
+  defp do_run(events, frame) do
     hunter_target_entities =
-      frame.event_stream
+      events
       |> Stream.filter(fn
         %IST.Events.AcquireTargetLock{} -> true
         _ -> false
@@ -61,8 +65,7 @@ defmodule IST.Systems.TargetLock do
   defp create_target_entities(hunter_target_entities) do
     hunter_target_entities
     |> Enum.map(fn %{hunter: hunter, target: target} ->
-      {Ecspanse.Entity,
-       components: [IST.Components.Target], children: [target], parents: [hunter]}
+      {Ecspanse.Entity, components: [IST.Components.Target], children: [target], parents: [hunter]}
     end)
     |> Ecspanse.Command.spawn_entities!()
   end

@@ -51,13 +51,12 @@ defmodule IST.Systems.TargetLock do
   end
 
   defp delete_existing_targets(hunter_entities, token) do
-    Query.select({Ecspanse.Component.Children}, for: hunter_entities)
+    Query.select({Ecspanse.Entity},
+      with: [IST.Components.Target],
+      for_children_of: hunter_entities
+    )
     |> Query.stream(token)
-    |> Stream.map(fn {children} -> children.list end)
-    |> Stream.concat()
-    |> Stream.filter(fn children_entity ->
-      Query.is_type?(children_entity, IST.Components.Target, token)
-    end)
+    |> Stream.map(fn {entity} -> entity end)
     |> Enum.to_list()
     |> Ecspanse.Command.despawn_entities!()
   end

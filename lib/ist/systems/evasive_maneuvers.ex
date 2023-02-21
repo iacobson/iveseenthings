@@ -40,7 +40,7 @@ defmodule IST.Systems.EvasiveManeuvers do
       for: entities
     )
     |> Query.stream(token)
-    |> Stream.map(fn {energy, children} ->
+    |> Stream.map(fn {energy_component, children} ->
       evastion_entity =
         children.list
         |> Enum.find(fn entity ->
@@ -55,7 +55,7 @@ defmodule IST.Systems.EvasiveManeuvers do
         )
 
       %{
-        energy_storage_component: energy,
+        energy_storage_component: energy_component,
         evasion_component: evasion_component,
         energy_cost_component: energy_cost_component
       }

@@ -40,7 +40,7 @@ defmodule IST.Systems.BoostShields do
       for: entities
     )
     |> Query.stream(token)
-    |> Stream.map(fn {energy, children} ->
+    |> Enum.each(fn {energy_component, children} ->
       shields_entity =
         children.list
         |> Enum.find(fn entity ->
@@ -54,30 +54,18 @@ defmodule IST.Systems.BoostShields do
           token
         )
 
-      %{
-        energy_storage_component: energy,
-        shields_component: shields_component,
-        energy_cost_component: energy_cost_component
-      }
-    end)
-    |> Stream.filter(fn %{
-                          energy_storage_component: energy_storage,
-                          energy_cost_component: energy_cost
-                        } ->
-      energy_storage.value >= energy_cost.value
-    end)
-    |> Enum.map(fn %{
-                     energy_storage_component: energy_storage,
-                     shields_component: shields,
-                     energy_cost_component: energy_cost
-                   } ->
-      update_energy_storage = {energy_storage, value: energy_storage.value - energy_cost.value}
+      # Example of using individual component update instead of batch updating
+      if energy_component.value >= energy_cost_component.value do
+        :ok =
+          Ecspanse.Command.update_component!(energy_component,
+            value: energy_component.value - energy_cost_component.value
+          )
 
-      update_shields = {shields, hp: shields.hp + shields.boost}
-
-      [update_energy_storage, update_shields]
+        :ok =
+          Ecspanse.Command.update_component!(shields_component,
+            hp: shields_component.hp + shields_component.boost
+          )
+      end
     end)
-    |> List.flatten()
-    |> Ecspanse.Command.update_components!()
   end
 end

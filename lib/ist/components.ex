@@ -297,13 +297,14 @@ defmodule IST.Components do
     end
   end
 
-  defmodule EnergyCountdown do
-    @moduledoc "Energy countdown timer identifier"
-    use Ecspanse.Component, access_mode: :entity_type
-  end
-
   defmodule EvasionCountdown do
     @moduledoc "Evasion countdown timer identifier"
     use Ecspanse.Component, access_mode: :entity_type
+  end
+
+  defmodule EnergyTimer do
+    @moduledoc "Energy Timer component"
+    use Ecspanse.Component.Timer,
+      state: [duration: 3000, event: IST.Events.EnergyTimerComplete, mode: :repeat]
   end
 end

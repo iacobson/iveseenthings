@@ -109,7 +109,7 @@ defmodule ISTWeb.Components.Player do
             current_level_up_points: level.current_level_up_points,
             next_level_up_points: level.next_level_up_points
         }
-        |> add_energy_countdown(children, token)
+        |> add_energy_countdown(entity, token)
         |> update_defenses(children, token)
 
       _ ->
@@ -161,7 +161,7 @@ defmodule ISTWeb.Components.Player do
       next_level_up_points: level.next_level_up_points
     }
     |> add_type(entity, token)
-    |> add_energy_countdown(children, token)
+    |> add_energy_countdown(entity, token)
     |> add_evasion(children, token)
     |> add_shields(children, token)
     |> add_drones(children, token)
@@ -178,16 +178,9 @@ defmodule ISTWeb.Components.Player do
     end
   end
 
-  def add_energy_countdown(player, children, token) do
-    {countdown} =
-      Query.select(
-        {Components.Countdown},
-        with: [Components.EnergyCountdown],
-        for: children
-      )
-      |> Query.one(token)
-
-    Map.put(player, :energy_countdown, countdown.millisecond)
+  def add_energy_countdown(player, entity, token) do
+    {:ok, energy_timer} = Query.fetch_component(entity, Components.EnergyTimer, token)
+    Map.put(player, :energy_countdown, energy_timer.time)
   end
 
   defp add_evasion(player, children, token) do

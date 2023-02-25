@@ -72,4 +72,11 @@ defmodule IST.Events do
         :shields_efficiency
       ]
   end
+
+  defmodule EnergyTimerComplete do
+    @moduledoc """
+    The energy timer has reached zero.
+    """
+    use Ecspanse.Event.Timer
+  end
 end

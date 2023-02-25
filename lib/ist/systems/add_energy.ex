@@ -6,7 +6,7 @@ defmodule IST.Systems.AddEnergy do
   use Ecspanse.System, lock_components: [IST.Components.EnergyStorage]
   alias Ecspanse.Query
 
-  alias Ecspanse.Event.ComponentUpdated
+  alias IST.Events.EnergyTimerComplete
 
   @impl true
   def run(frame) do
@@ -16,42 +16,22 @@ defmodule IST.Systems.AddEnergy do
   defp do_run(events, frame) do
     events
     |> Stream.filter(fn
-      %ComponentUpdated{
-        updated: %IST.Components.Countdown{millisecond: 0}
-      } ->
-        true
-
-      _ ->
-        false
+      %EnergyTimerComplete{} -> true
+      _ -> false
     end)
-    |> Stream.map(& &1.updated)
-    |> Enum.map(fn counter ->
-      Query.get_component_entity(counter, frame.token)
+    |> Enum.map(fn timer_event ->
+      timer_event.entity
     end)
-    |> energy_countdown_parents(frame.token)
+    |> update_energy(frame.token)
   end
 
-  defp energy_countdown_parents(countdown_entities, token) do
+  defp update_energy(entities, token) do
     # Careful with this situation!
     # if a list of entities would be empty, it would query for all entities!
-    if Enum.any?(countdown_entities) do
-      Query.select(
-        {Ecspanse.Component.Parents},
-        with: [IST.Components.EnergyCountdown],
-        for: countdown_entities
-      )
-      |> Query.stream(token)
-      |> Stream.map(fn {parent} -> parent.list end)
-      |> Enum.concat()
-      |> update_energy(token)
-    end
-  end
-
-  defp update_energy(parent_entities, token) do
-    if Enum.any?(parent_entities) do
+    if Enum.any?(entities) do
       Query.select({IST.Components.EnergyStorage},
         with: [IST.Components.BattleShip],
-        for: parent_entities
+        for: entities
       )
       |> Query.stream(token)
       |> Enum.map(fn {energy} ->

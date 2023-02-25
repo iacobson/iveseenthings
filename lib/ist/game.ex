@@ -15,6 +15,7 @@ defmodule IST.Game do
     |> World.add_system_set({__MODULE__, :sync_systems}, run_in_state: :play)
     |> World.add_system_set({__MODULE__, :async_event_systems}, run_in_state: :play)
     |> World.add_system_set({__MODULE__, :async_systems}, run_in_state: :play)
+    |> World.add_frame_end_system(Ecspanse.System.Timer, run_in_state: :play)
     |> World.add_frame_end_system(IST.Systems.CheckPlayersConnected)
   end
 

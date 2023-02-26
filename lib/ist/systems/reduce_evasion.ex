@@ -8,21 +8,12 @@ defmodule IST.Systems.ReduceEvasion do
 
   @impl true
   def run(frame) do
-    Query.select({IST.Components.Evasion, Ecspanse.Component.Children},
+    Query.select({IST.Components.Evasion, IST.Components.EvasionTimer},
       with: [IST.Components.Defense]
     )
     |> Query.stream(frame.token)
-    |> Stream.map(fn {evasion, children} ->
-      countdown_entity =
-        children.list
-        |> Enum.find(fn child ->
-          Query.is_type?(child, IST.Components.EvasionCountdown, frame.token)
-        end)
-
-      {:ok, countdown_component} =
-        Query.fetch_component(countdown_entity, IST.Components.Countdown, frame.token)
-
-      new_value = ceil(countdown_component.millisecond / 1000)
+    |> Stream.map(fn {evasion, evasion_timer} ->
+      new_value = ceil(evasion_timer.time / 1000)
 
       %{evasion: evasion, new_value: new_value}
     end)

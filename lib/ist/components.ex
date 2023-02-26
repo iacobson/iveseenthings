@@ -276,35 +276,18 @@ defmodule IST.Components do
 
   # Generic
 
-  defmodule Countdown do
-    @moduledoc """
-    Count down timer.
-    Because an entity may need multiple countdowns, they will often be
-    children entities.
-    """
-    use Ecspanse.Component, state: [millisecond: nil, initial: nil]
-
-    @type t :: %__MODULE__{millisecond: non_neg_integer(), initial: non_neg_integer()}
-
-    def validate(%__MODULE__{millisecond: millisecond, initial: initial}) do
-      if is_integer(millisecond) and millisecond >= 0 and
-           is_integer(initial) and initial >= 0 do
-        :ok
-      else
-        {:error,
-         "Count down value and the initial value must be a non negative integers. Got: #{inspect(millisecond)}, #{inspect(initial)}"}
-      end
-    end
-  end
-
-  defmodule EvasionCountdown do
-    @moduledoc "Evasion countdown timer identifier"
-    use Ecspanse.Component, access_mode: :entity_type
-  end
-
   defmodule EnergyTimer do
     @moduledoc "Energy Timer component"
     use Ecspanse.Component.Timer,
       state: [duration: 3000, event: IST.Events.EnergyTimerComplete, mode: :repeat]
+  end
+
+  defmodule EvasionTimer do
+    @moduledoc """
+    The eveasion timer keeps track of the actual evasion value.
+    """
+
+    use Ecspanse.Component.Timer,
+      state: [duration: 30 * 1000, event: IST.Events.EvasionTimerComplete, mode: :once]
   end
 end

@@ -79,4 +79,12 @@ defmodule IST.Events do
     """
     use Ecspanse.Event.Timer
   end
+
+  defmodule EvasionTimerComplete do
+    @moduledoc """
+    Evasion reached zero.
+    This is not really used.
+    """
+    use Ecspanse.Event.Timer
+  end
 end

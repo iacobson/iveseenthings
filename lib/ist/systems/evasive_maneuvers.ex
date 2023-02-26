@@ -7,7 +7,7 @@ defmodule IST.Systems.EvasiveManeuvers do
   use Ecspanse.System,
     lock_components: [
       IST.Components.EnergyStorage,
-      {IST.Components.Countdown, entity_type: IST.Components.EvasionCountdown}
+      IST.Components.EvasionTimer
     ]
 
   alias IST.Events.PerformEvasiveManeuvers
@@ -47,17 +47,18 @@ defmodule IST.Systems.EvasiveManeuvers do
           Ecspanse.Query.has_component?(entity, IST.Components.Evasion, token)
         end)
 
-      {:ok, {evasion_component, energy_cost_component}} =
+      {:ok, {evasion_component, energy_cost_component, evasion_timer}} =
         Ecspanse.Query.fetch_components(
           evastion_entity,
-          {IST.Components.Evasion, IST.Components.EnergyCost},
+          {IST.Components.Evasion, IST.Components.EnergyCost, IST.Components.EvasionTimer},
           token
         )
 
       %{
         energy_storage_component: energy_component,
         evasion_component: evasion_component,
-        energy_cost_component: energy_cost_component
+        energy_cost_component: energy_cost_component,
+        evasion_timer: evasion_timer
       }
     end)
     |> Stream.filter(fn %{
@@ -69,25 +70,14 @@ defmodule IST.Systems.EvasiveManeuvers do
     |> Enum.map(fn %{
                      energy_storage_component: energy_storage,
                      evasion_component: evasion,
-                     energy_cost_component: energy_cost
+                     energy_cost_component: energy_cost,
+                     evasion_timer: evasion_timer
                    } ->
-      evasion_entity = Query.get_component_entity(evasion, token)
-
-      evasion_countdown_entity =
-        Query.list_children(evasion_entity, token)
-        |> Enum.find(fn entity ->
-          Query.is_type?(entity, IST.Components.EvasionCountdown, token)
-        end)
-
-      {:ok, countdown} =
-        Query.fetch_component(evasion_countdown_entity, IST.Components.Countdown, token)
-
       update_energy_storage = {energy_storage, value: energy_storage.value - energy_cost.value}
 
-      update_countdown =
-        {countdown, millisecond: countdown.millisecond + evasion.maneuvers * 1000}
+      update_timer = {evasion_timer, time: evasion_timer.time + evasion.maneuvers * 1000}
 
-      [update_energy_storage, update_countdown]
+      [update_energy_storage, update_timer]
     end)
     |> List.flatten()
     |> Ecspanse.Command.update_components!()

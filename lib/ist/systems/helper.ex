@@ -45,26 +45,12 @@ defmodule IST.Systems.Helper do
   # Defenses
 
   defp evasion_entity_spec do
-    children =
-      Ecspanse.Command.spawn_entities!([
-        evasion_countdown_entity_spec()
-      ])
-
     {Ecspanse.Entity,
      components: [
        Components.Defense,
+       Components.EvasionTimer,
        {Components.Evasion, value: 0, maneuvers: 10},
        {Components.EnergyCost, value: 1}
-     ],
-     children: children}
-  end
-
-  defp evasion_countdown_entity_spec do
-    # starts with the initial evasion value 30
-    {Ecspanse.Entity,
-     components: [
-       Components.EvasionCountdown,
-       {Components.Countdown, millisecond: 30 * 1000, initial: 0}
      ]}
   end
 

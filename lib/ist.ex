@@ -23,7 +23,12 @@ defmodule IST do
 
   def handle_continue(:start_game, state) do
     # This is the only world in thig game.
-    {:ok, _token} = Ecspanse.new(IST.Game, name: IST.Game, dyn_sup: IST.DynamicSupervisor)
+    {:ok, _token} =
+      Ecspanse.new(IST.Game,
+        name: IST.Game,
+        dyn_sup: IST.DynamicSupervisor
+      )
+
     {:noreply, state}
   end
 end

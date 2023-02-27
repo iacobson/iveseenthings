@@ -76,23 +76,41 @@ defmodule IST.Systems.DealDamage do
 
     {:ok, drones} = Query.fetch_component(drone_entity, IST.Components.Drones, token)
 
-    if hits_the_target?(evasion, event) and pass_the_drones?(drones, event) do
+    {:ok, battle_logger_resource} = Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger, token)
+
+    battle_logger_table = battle_logger_resource.ecs_table
+
+    if hits_the_target?(evasion, event, battle_logger_table) and
+         pass_the_drones?(drones, event, battle_logger_table) do
       shields_entity =
         Enum.find(children_entities, fn entity ->
           Query.has_component?(entity, IST.Components.Shields, token)
         end)
 
       {:ok, shields} = Query.fetch_component(shields_entity, IST.Components.Shields, token)
-      {new_shields_hp, remaining_damage} = deal_shield_damage(shields, event)
+      {new_shields_hp, hull_damage} = deal_shield_damage(shields, event)
+
+      shields_damage = shields.hp - new_shields_hp
+
+      :ets.insert(
+        battle_logger_table,
+        {{System.os_time(:millisecond), event.hunter_id, event.target_id},
+         %{
+           result: :hit,
+           damage_type: event.damage_type,
+           shields_damage: shields_damage,
+           hull_damage: hull_damage
+         }}
+      )
 
       update_shields_hp = {shields, hp: new_shields_hp}
-      update_hull_hp = {hull, hp: max(hull.hp - remaining_damage, 0)}
+      update_hull_hp = {hull, hp: max(hull.hp - hull_damage, 0)}
 
       modifier = target_level.value
-      add_points = min(hull.hp, remaining_damage) * modifier
+      add_points = min(hull.hp, hull_damage) * modifier
       update_points = add_hunter_points(event, add_points, token)
 
-      update_drones = destroy_a_drone(remaining_damage, drones)
+      update_drones = destroy_a_drone(hull_damage, drones)
 
       [update_shields_hp, update_hull_hp, update_points, update_drones] |> Enum.reject(&is_nil/1)
     else
@@ -100,38 +118,65 @@ defmodule IST.Systems.DealDamage do
     end
   end
 
-  defp hits_the_target?(evasion, event) do
+  defp hits_the_target?(evasion, event, battle_logger_table) do
     case IST.Util.odds(
            miss: evasion.value,
            hit: event.accuracy
          ) do
-      :hit -> true
-      :miss -> false
+      :hit ->
+        true
+
+      :miss ->
+        :ets.insert(
+          battle_logger_table,
+          {{System.os_time(:millisecond), event.hunter_id, event.target_id},
+           %{result: :miss, damage_type: event.damage_type}}
+        )
+
+        false
     end
   end
 
   # the Point Defense Drone can intercept missiles and railgun shots
-  defp pass_the_drones?(drones, %{damage_type: :railgun} = event) do
+  defp pass_the_drones?(drones, %{damage_type: :railgun} = event, battle_logger_table) do
     case IST.Util.odds(
            stop: drones.projectile_defense * drones.count,
            hit: event.accuracy
          ) do
-      :hit -> true
-      :stop -> false
+      :hit ->
+        true
+
+      :stop ->
+        :ets.insert(
+          battle_logger_table,
+          {{System.os_time(:millisecond), event.hunter_id, event.target_id},
+           %{result: :stop, damage_type: event.damage_type}}
+        )
+
+        false
     end
   end
 
-  defp pass_the_drones?(drones, %{damage_type: :missile} = event) do
+  defp pass_the_drones?(drones, %{damage_type: :missile} = event, battle_logger_table) do
     case IST.Util.odds(
            stop: drones.missile_defense * drones.count,
            hit: event.accuracy
          ) do
-      :hit -> true
-      :stop -> false
+      :hit ->
+        true
+
+      :stop ->
+        :ets.insert(
+          battle_logger_table,
+          {{System.os_time(:millisecond), event.hunter_id, event.target_id},
+           %{result: :stop, damage_type: event.damage_type}}
+        )
+
+        false
     end
   end
 
-  defp pass_the_drones?(_drones, _event), do: true
+  defp pass_the_drones?(_drones, _event, _), do: true
 
   # weapon shield efficeincy is a percentage
   defp deal_shield_damage(shields, event) do
@@ -158,7 +203,6 @@ defmodule IST.Systems.DealDamage do
     {:ok, hunter_level} = Query.fetch_component(event.hunter_entity, IST.Components.Level, token)
 
     {hunter_level,
-     points: hunter_level.points + points,
-     current_level_up_points: hunter_level.current_level_up_points + points}
+     points: hunter_level.points + points, current_level_up_points: hunter_level.current_level_up_points + points}
   end
 end

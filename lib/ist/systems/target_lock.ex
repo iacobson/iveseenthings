@@ -64,7 +64,8 @@ defmodule IST.Systems.TargetLock do
   defp create_target_entities(hunter_target_entities) do
     hunter_target_entities
     |> Enum.map(fn %{hunter: hunter, target: target} ->
-      {Ecspanse.Entity, components: [IST.Components.Target], children: [target], parents: [hunter]}
+      {Ecspanse.Entity,
+       components: [IST.Components.Target], children: [target], parents: [hunter]}
     end)
     |> Ecspanse.Command.spawn_entities!()
   end

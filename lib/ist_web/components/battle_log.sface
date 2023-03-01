@@ -1,0 +1,39 @@
+<style>
+  .scoped-log {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  }
+</style>
+<div id="battle_log" class="full-width full-height">
+  <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">
+    <fieldset class="tui-fieldset tui-no-shadow full-width full-height scoped-log cyan-168-border cyan-255-border-hover tui-bg-cyan-black">
+      <legend class="center purple-255-text">
+        <b>BATTLE LOG</b>
+      </legend>
+      {#for log <- @battle_log}
+        <div
+          class={"purple-168-hover": log.select != nil, "cursor-pointer": log.select != nil}
+          :on-click={JS.push(@select_player_event.name,
+            value: %{"player_id" => log.select},
+            target: @select_player_event.target
+          )}
+        >
+          {log.hunter.name} --
+          <span class="red-255-text">{log.weapon}</span> -
+          {#case log.outcome}
+            {#match %{result: :miss, text: text}}
+              <span class="green-255-text">{text}</span> -->
+            {#match %{result: :stop, text: text}}
+              <span class="green-255-text">{text}</span> -->
+            {#match %{result: :hit, shields_damage: shields_damage, hull_damage: hull_damage}}
+              <span class="green-255-text">[s]<span class={"white-text": shields_damage == 0, "red-255-text": shields_damage > 0}>{shields_damage}</span></span>
+              |
+              <span class="green-255-text">[h]<span class={"white-text": hull_damage == 0, "red-255-text": hull_damage > 0}>{hull_damage}</span></span>
+              -->
+          {/case}
+          {log.target.name}
+        </div>
+      {/for}
+    </fieldset>
+  </div>
+</div>

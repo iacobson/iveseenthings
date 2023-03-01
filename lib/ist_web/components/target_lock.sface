@@ -1,4 +1,4 @@
-<div id="target_locked full-width">
+<div id="target_locked" class="full-width">
   <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">
     <fieldset class="tui-fieldset tui-no-shadow full-width full-height cyan-168-border cyan-255-border-hover tui-bg-cyan-black">
       <legend class="center purple-255-text">

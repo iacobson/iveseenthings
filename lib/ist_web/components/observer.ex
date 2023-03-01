@@ -7,6 +7,7 @@ defmodule ISTWeb.Components.Observer do
 
   alias Ecspanse.Query
 
+  alias ISTWeb.Components.BattleLog, as: BattleLogComponent
   alias ISTWeb.Components.Player, as: PlayerComponent
   alias ISTWeb.Components.PlayerList, as: PlayerListComponent
   alias ISTWeb.Components.TargetLock, as: TargetLockComponent
@@ -29,9 +30,19 @@ defmodule ISTWeb.Components.Observer do
   end
 
   @impl true
-  def handle_event("select_player", %{"player_id" => id}, socket) do
-    socket = assign(socket, selected_player: id)
+  def handle_event("select_player", %{"player_id" => nil}, socket) do
     {:noreply, socket}
+  end
+
+  def handle_event("select_player", %{"player_id" => id}, socket) do
+    entity = Ecspanse.Entity.build(id)
+
+    if Query.has_component?(entity, IST.Components.BattleShip, socket.assigns.token) do
+      socket = assign(socket, selected_player: id)
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   defp fetch_target_player(socket) do

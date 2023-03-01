@@ -9,13 +9,13 @@ defmodule ISTWeb.Components.TargetLock do
   alias Ecspanse.Entity
   alias IST.Components
 
-  prop(tick, :string, from_context: :tick)
-  prop(state, :string, from_context: :state)
-  prop(token, :string, from_context: :token)
+  prop tick, :string, from_context: :tick
+  prop state, :string, from_context: :state
+  prop token, :string, from_context: :token
 
   @doc "The enemy target entity ID"
-  prop(targeted, :string, default: nil)
-  data(enemy, :map, default: %{id: nil, name: nil, type: nil, energy: nil})
+  prop targeted, :string, default: nil
+  data enemy, :map, default: %{id: nil, name: nil, type: nil, energy: nil}
 
   def update(assigns, socket) do
     socket =

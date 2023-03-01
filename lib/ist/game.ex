@@ -49,5 +49,6 @@ defmodule IST.Game do
     |> World.add_system(IST.Systems.BotAction)
     |> World.add_system(IST.Systems.DealDamage)
     |> World.add_system(IST.Systems.LevelUp)
+    |> World.add_system(IST.Systems.CleanLogger)
   end
 end

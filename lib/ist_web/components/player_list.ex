@@ -12,15 +12,16 @@ defmodule ISTWeb.Components.PlayerList do
   alias IST.Components
   alias Phoenix.LiveView.JS
 
-  prop(tick, :string, from_context: :tick)
-  prop(state, :string, from_context: :state)
-  prop(token, :string, from_context: :token)
+  prop tick, :string, from_context: :tick
+  prop state, :string, from_context: :state
+  prop token, :string, from_context: :token
 
-  prop(select_player_event, :event)
-  prop(selected, :string, default: nil)
+  prop current_player, :string, default: nil
+  prop select_player_event, :event
+  prop selected, :string, default: nil
 
-  data(players, :list, default: [])
-  data(fps, :decimal, default: 0.0)
+  data players, :list, default: []
+  data fps, :decimal, default: 0.0
 
   def update(assigns, socket) do
     socket =
@@ -39,8 +40,11 @@ defmodule ISTWeb.Components.PlayerList do
         assign(socket, players: players)
 
       %{state: :play} ->
-        # TODO
-        socket
+        players =
+          get_all_players(socket.assigns.token)
+          |> Enum.reject(&(&1.id == socket.assigns.current_player))
+
+        assign(socket, players: players)
     end
   end
 

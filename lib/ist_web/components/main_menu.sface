@@ -11,9 +11,22 @@
       </div>
     </h1>
 
-    <div
-      class="tui-button center content tui-no-shadow cyan-168 cyan-255-hover white-text"
-      :on-click={JS.push("change_state", value: %{state: :observer}, target: :live_view)}
-    >OBSERVER</div>
+    <div class="content">
+      <div
+        class="tui-button center content tui-no-shadow cyan-168 cyan-255-hover white-text"
+        :on-click={JS.push("change_state", value: %{state: :play}, target: :live_view)}
+      >
+        PLAY
+      </div>
+    </div>
+
+    <div class="content">
+      <div
+        class="tui-button center content tui-no-shadow cyan-168 cyan-255-hover white-text"
+        :on-click={JS.push("change_state", value: %{state: :observer}, target: :live_view)}
+      >
+        OBSERVER
+      </div>
+    </div>
   </div>
 </div>

@@ -7,6 +7,7 @@ defmodule ISTWeb.Live.Game do
 
   alias ISTWeb.Components.MainMenu, as: MainMenuComponent
   alias ISTWeb.Components.Observer, as: ObserverComponent
+  alias ISTWeb.Components.Play, as: PlayComponent
 
   prop socket_connected, :boolean, default: false
   prop token, :string, default: nil

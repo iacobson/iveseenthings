@@ -1,0 +1,60 @@
+<style>
+  .scoped-top {
+  height: 50%;
+  }
+  .scoped-bottom {
+  height: 45%;
+  }
+</style>
+
+<div id="play" class="full-width full-height">
+  <div class="row full-height">
+    {#if @current_player}
+      <div class="col s8 full-height">
+        <div class="row scoped-top">
+          <div class="col s6">
+            <PlayerComponent :if={@selected_player} id="player" selected={@selected_player} />
+          </div>
+          <div class="col s6">
+            <div class="row">
+              <div class="col s12">
+                <TargetLockComponent :if={@target_player} id="target_locked" targeted={@target_player} />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <TargetedByComponent
+                  :if={@selected_player}
+                  id="targeted_by"
+                  select_player_event="select_player"
+                  selected={@selected_player}
+                  player={@selected_player}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row scoped-bottom">
+          <div class="col s12 full-height">
+            <BattleLogComponent
+              :if={@selected_player}
+              id="battle_log"
+              player={@selected_player}
+              target={@target_player}
+              select_player_event="select_player"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col s4 full-height">
+        <PlayerListComponent
+          id="player_list"
+          select_player_event="select_player"
+          selected={@selected_player}
+        />
+      </div>
+    {#else}
+      ENTER NAME
+    {/if}
+  </div>
+</div>

@@ -28,7 +28,7 @@
             {#match %{result: :hit, shields_damage: shields_damage, hull_damage: hull_damage}}
               <span class="green-255-text">[s]<span class={"white-text": shields_damage == 0, "red-255-text": shields_damage > 0}>{shields_damage}</span></span>
               |
-              <span class="green-255-text">[h]<span class={"white-text": hull_damage == 0, "red-255-text": hull_damage > 0}>{hull_damage}</span></span>
+              <span class="green-255-text">[H]<span class={"white-text": hull_damage == 0, "red-255-text": hull_damage > 0}>{hull_damage}</span></span>
               -->
           {/case}
           {log.target.name}

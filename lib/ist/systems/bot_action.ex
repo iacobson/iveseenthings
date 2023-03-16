@@ -81,7 +81,7 @@ defmodule IST.Systems.BotAction do
       random_target = Enum.random(target_entities)
 
       Ecspanse.event(
-        {IST.Events.AcquireTargetLock, entity.id,
+        {IST.Events.AcquireTargetLock, random_target.id,
          hunter_id: entity.id, target_id: random_target.id},
         frame.token
       )

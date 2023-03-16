@@ -11,7 +11,7 @@
       </legend>
       <div>
         <span>HULL HP</span>
-        <span class="orange-255-text">[h]</span>
+        <span class="orange-255-text">[H]</span>
         <span class={"tui-shortcut", "orange-255-text": @player.hull >= 20, "red-255-text": @player.hull < 20}>{@player.hull}</span>
       </div>
       <div>

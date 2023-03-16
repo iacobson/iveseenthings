@@ -22,15 +22,5 @@ defmodule IST.Systems.AddOrRemoveBots do
     if current_player_count < target_player_count do
       IST.Systems.Helper.spawn_bot_entity()
     end
-
-    # TODO:
-    # - after implementing the XP system,
-    # if the current player count is higher than the target,
-    # remove the bots with the lowest XP.
-    # - first chedk if there are any bots left in the game
-
-    # keep in mind when creating the join player system
-    # allow join only for player_count + 1
-    # if the games ends with 101 human players, it will not accept new players
   end
 end

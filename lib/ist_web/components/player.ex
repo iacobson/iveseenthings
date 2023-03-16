@@ -12,13 +12,13 @@ defmodule ISTWeb.Components.Player do
   alias Ecspanse.Entity
   alias IST.Components
 
-  prop(tick, :string, from_context: :tick)
-  prop(state, :string, from_context: :state)
-  prop(token, :string, from_context: :token)
+  prop tick, :string, from_context: :tick
+  prop state, :string, from_context: :state
+  prop token, :string, from_context: :token
 
   @doc "The BattleShip entity ID"
-  prop(selected, :string, default: nil)
-  data(player, :struct, default: %{id: nil})
+  prop selected, :string, default: nil
+  data player, :struct, default: %{id: nil}
 
   defstruct id: nil,
             name: nil,
@@ -64,27 +64,18 @@ defmodule ISTWeb.Components.Player do
   end
 
   defp fetch_player(socket) do
-    case socket.assigns do
-      %{state: :observer} ->
-        entity = Entity.build(socket.assigns.selected)
+    entity = Entity.build(socket.assigns.selected)
 
-        player =
-          if socket.assigns.selected && socket.assigns.player.id == socket.assigns.selected do
-            # update just the dynamic values
-            update_player(entity, socket.assigns.player, socket.assigns.token)
-          else
-            # build the full player structure only when changing the selected player
-            build_player(entity, socket.assigns.token)
-          end
+    player =
+      if socket.assigns.selected && socket.assigns.player.id == socket.assigns.selected do
+        # update just the dynamic values
+        update_player(entity, socket.assigns.player, socket.assigns.token)
+      else
+        # build the full player structure only when changing the selected player
+        build_player(entity, socket.assigns.token)
+      end
 
-        assign(socket, player: player)
-
-      %{state: :play} ->
-        # TODO
-        # update_player(entity, socket.assigns.player, socket.assigns.token)
-        # build_player(entity, socket.assigns.token)
-        socket
-    end
+    assign(socket, player: player)
   end
 
   defp update_player(entity, player, token) do

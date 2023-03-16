@@ -6,10 +6,6 @@ defmodule ISTWeb.Hook.User do
   import Phoenix.Component
 
   def on_mount(:user_status, _params, _session, socket) do
-    # TODO: implement session and check if the user has a session
-    # if the user has a session, find if it's already in a game
-    # save the ECS token in a global prop
-
     with {:ok, socket} <- check_socket_connected(socket),
          {:ok, socket} <- fetch_token(socket),
          {:ok, socket} <- assign_user_id(socket) do
@@ -43,6 +39,13 @@ defmodule ISTWeb.Hook.User do
   end
 
   defp assign_user_id(socket) do
-    {:ok, assign(socket, user_id: UUID.uuid4())}
+    id = UUID.uuid4()
+
+    socket =
+      socket
+      |> assign(user_id: id)
+      |> Surface.Components.Context.put(user_id: id)
+
+    {:ok, socket}
   end
 end

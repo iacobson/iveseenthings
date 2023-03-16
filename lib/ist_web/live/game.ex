@@ -13,7 +13,7 @@ defmodule ISTWeb.Live.Game do
   prop token, :string, default: nil
   prop user_id, :string, default: nil
 
-  data state, :atom, default: :main_menu, values!: [:main_menu, :observer]
+  data state, :atom, default: :main_menu, values!: [:main_menu, :observer, :play]
 
   # Live View and Live Component state fetching
   @fps 4
@@ -25,6 +25,7 @@ defmodule ISTWeb.Live.Game do
         socket = Surface.Components.Context.put(socket, state: socket.assigns.state)
         send(self(), :tick)
 
+        # This is used to determine if any human is connected to the game
         ISTWeb.Presence.track(self(), "iveseenthings", socket.assigns.user_id, %{})
 
         {:ok, socket}

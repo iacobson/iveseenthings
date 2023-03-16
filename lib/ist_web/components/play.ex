@@ -13,18 +13,32 @@ defmodule ISTWeb.Components.Play do
   alias ISTWeb.Components.TargetLock, as: TargetLockComponent
   alias ISTWeb.Components.TargetedBy, as: TargetedByComponent
 
-  prop tick, :string, from_context: :tick
-  prop state, :string, from_context: :state
-  prop token, :string, from_context: :token
+  prop(tick, :string, from_context: :tick)
+  prop(state, :string, from_context: :state)
+  prop(token, :string, from_context: :token)
+  prop(user_id, :string, from_context: :user_id)
 
-  data current_player, :string, default: nil
-  data selected_player, :string, default: nil
-  data target_player, :string, default: nil
+  data(player_created, :boolean, default: false)
+  data(player_dead, :boolean, default: false)
+  data(current_player, :string, default: nil)
+  data(target_player, :string, default: nil)
 
+  # Create the player
+  def update(assigns, %{assigns: %{player_created: false}} = socket) do
+    socket =
+      socket
+      |> assign(assigns)
+      |> create_player()
+
+    {:ok, socket}
+  end
+
+  # The player exists
   def update(assigns, socket) do
     socket =
       socket
       |> assign(assigns)
+      |> check_player_alive()
       |> fetch_target_player()
 
     {:ok, socket}
@@ -35,19 +49,41 @@ defmodule ISTWeb.Components.Play do
     {:noreply, socket}
   end
 
-  def handle_event("select_player", %{"player_id" => id}, socket) do
-    entity = Ecspanse.Entity.build(id)
+  def handle_event("select_player", %{"player_id" => target_id}, socket) do
+    Ecspanse.event(
+      {IST.Events.AcquireTargetLock, target_id,
+       hunter_id: socket.assigns.current_player, target_id: target_id},
+      socket.assigns.token
+    )
 
-    if Query.has_component?(entity, IST.Components.BattleShip, socket.assigns.token) do
-      socket = assign(socket, selected_player: id)
-      {:noreply, socket}
+    {:noreply, socket}
+  end
+
+  defp create_player(socket) do
+    Ecspanse.event(
+      {IST.Events.AddPlayer, socket.assigns.user_id, player_id: socket.assigns.user_id},
+      socket.assigns.token
+    )
+
+    assign(socket, player_created: true)
+  end
+
+  defp check_player_alive(socket) do
+    entity = Ecspanse.Entity.build(socket.assigns.user_id)
+
+    if Ecspanse.Query.is_type?(entity, IST.Components.Human, socket.assigns.token) do
+      assign(socket, player_dead: false, current_player: socket.assigns.user_id)
     else
-      {:noreply, socket}
+      assign(socket, player_dead: true, current_player: nil)
     end
   end
 
+  defp fetch_target_player(%{assigns: %{current_player: nil}} = socket) do
+    socket
+  end
+
   defp fetch_target_player(socket) do
-    case socket.assigns.selected_player do
+    case socket.assigns.current_player do
       nil ->
         assign(socket, target_player: nil)
 

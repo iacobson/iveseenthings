@@ -23,7 +23,7 @@
             [{String.first(player.type)}]
           </b>
           {player.name}
-          <input type="radio" name="player_list" checked={player.id == @selected}>
+          <input type="radio" name="targeted_by" checked={player.id == @selected}>
           <span />
         </label>
       {/for}

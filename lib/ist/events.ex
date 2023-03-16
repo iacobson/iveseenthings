@@ -3,6 +3,18 @@ defmodule IST.Events do
   ECS events
   """
 
+  defmodule AddPlayer do
+    @moduledoc """
+    Adds a new human player to the game.
+    """
+
+    use Ecspanse.Event, fields: [:player_id]
+
+    @type t :: %__MODULE__{
+            player_id: binary()
+          }
+  end
+
   defmodule AcquireTargetLock do
     @moduledoc """
     Acquires a target lock.

@@ -76,7 +76,8 @@ defmodule IST.Systems.DealDamage do
 
     {:ok, drones} = Query.fetch_component(drone_entity, IST.Components.Drones, token)
 
-    {:ok, battle_logger_resource} = Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger, token)
+    {:ok, battle_logger_resource} =
+      Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger, token)
 
     battle_logger_table = battle_logger_resource.ecs_table
 
@@ -203,6 +204,7 @@ defmodule IST.Systems.DealDamage do
     {:ok, hunter_level} = Query.fetch_component(event.hunter_entity, IST.Components.Level, token)
 
     {hunter_level,
-     points: hunter_level.points + points, current_level_up_points: hunter_level.current_level_up_points + points}
+     points: hunter_level.points + points,
+     current_level_up_points: hunter_level.current_level_up_points + points}
   end
 end

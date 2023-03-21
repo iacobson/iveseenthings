@@ -12,7 +12,9 @@ defmodule IST.Systems.InitGame do
 
     # The ETS is started from a Task, so it is temporary.
     # Creating a dedicated server that would act as parent for the ETS table
-    {:ok, ets_heir_pid} = DynamicSupervisor.start_child(IST.DynamicSupervisor, {IST.ETSParent, []})
+    {:ok, ets_heir_pid} =
+      DynamicSupervisor.start_child(IST.DynamicSupervisor, {IST.ETSParent, []})
+
     # link the world process with the ETS parent process
     send(ets_heir_pid, {:link_world, frame.token})
 
@@ -26,6 +28,8 @@ defmodule IST.Systems.InitGame do
         write_concurrency: :auto
       ])
 
-    Ecspanse.Command.insert_resource!({IST.Resources.BattleLogger, ecs_table: battle_logger_ecs_table})
+    Ecspanse.Command.insert_resource!(
+      {IST.Resources.BattleLogger, ecs_table: battle_logger_ecs_table}
+    )
   end
 end

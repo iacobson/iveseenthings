@@ -6,6 +6,7 @@ defmodule ISTWeb.Live.Game do
   use ISTWeb, :surface_live_view
 
   alias ISTWeb.Components.MainMenu, as: MainMenuComponent
+  alias ISTWeb.Components.GameOver, as: GameOverComponent
   alias ISTWeb.Components.Observer, as: ObserverComponent
   alias ISTWeb.Components.Play, as: PlayComponent
 
@@ -13,7 +14,7 @@ defmodule ISTWeb.Live.Game do
   prop token, :string, default: nil
   prop user_id, :string, default: nil
 
-  data state, :atom, default: :main_menu, values!: [:main_menu, :observer, :play]
+  data state, :atom, default: :main_menu, values!: [:main_menu, :observer, :play, :game_over]
 
   # Live View and Live Component state fetching
   @fps 4
@@ -38,16 +39,16 @@ defmodule ISTWeb.Live.Game do
   @impl true
   def handle_event("change_state", %{"state" => state}, socket) do
     state = String.to_existing_atom(state)
-
-    socket =
-      socket
-      |> assign(state: state)
-      |> Surface.Components.Context.put(state: state)
-
+    socket = update_state(state, socket)
     {:noreply, socket}
   end
 
   @impl true
+  def handle_info({:change_state, state}, socket) do
+    socket = update_state(state, socket)
+    {:noreply, socket}
+  end
+
   def handle_info(:tick, socket) do
     Process.send_after(self(), :tick, round(1000 / @fps))
 
@@ -56,5 +57,11 @@ defmodule ISTWeb.Live.Game do
       |> Surface.Components.Context.put(tick: System.os_time(:millisecond))
 
     {:noreply, socket}
+  end
+
+  defp update_state(new_state, socket) do
+    socket
+    |> assign(state: new_state)
+    |> Surface.Components.Context.put(state: new_state)
   end
 end

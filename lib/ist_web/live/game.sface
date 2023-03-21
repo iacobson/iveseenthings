@@ -9,6 +9,8 @@
             <ObserverComponent id="observer" />
           {#match :play}
             <PlayComponent id="play" />
+          {#match :game_over}
+            <GameOverComponent />
         {/case}
       </div>
     {/if}

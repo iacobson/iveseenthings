@@ -1,3 +1,9 @@
+<style>
+  .scoped-button-margin {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  }
+</style>
 <div id="player" class="full-width">
   <div class="tui-window full-width full-height tui-no-shadow tui-bg-cyan-black">
     <fieldset class="tui-fieldset tui-no-shadow full-width full-height cyan-168-border cyan-255-border-hover tui-bg-cyan-black">
@@ -25,7 +31,7 @@
       </div>
       <div>
         <span>ENERGY</span>
-        <span class="orange-255-text">[e]</span>
+        <span class="orange-255-text">[E]</span>
         <span class="cyan-255-text">{energy_progress(@player.energy_countdown)}</span>
         <span class="tui-shortcut orange-255-text">{@player.energy}</span>
       </div>
@@ -50,6 +56,59 @@
             <span class="tui-shortcut green-255-text">{@player.current_drones}</span>
           </div>
         </fieldset>
+      </div>
+
+      <div :if={@state == :play} class="row full-height">
+        <div class="col s6 full-height tui-no-shadow">
+          <button
+            class={
+              "tui-button content no-shadow full-width scoped-button-margin green-168 green-255-hover white-text",
+              disabled: @player.energy < @player.boost_shields_energy_cost
+            }
+            :on-click="boost_shields"
+          >[s]<span class="orange-255-text">[E]{@player.boost_shields_energy_cost}</span></button>
+
+          <button
+            class={
+              "tui-button content no-shadow full-width scoped-button-margin green-168 green-255-hover white-text",
+              disabled: @player.energy < @player.maneuvers_evasion_energy_cost
+            }
+            :on-click="maneuvers_evasion"
+          >[e]<span class="orange-255-text">[E]{@player.maneuvers_evasion_energy_cost}</span></button>
+
+          <button
+            class={
+              "tui-button content no-shadow full-width scoped-button-margin green-168 green-255-hover white-text",
+              disabled: @player.energy < @player.deploy_drones_energy_cost
+            }
+            :on-click="deploy_drones"
+          >[d]<span class="orange-255-text">[E]{@player.deploy_drones_energy_cost}</span></button>
+        </div>
+        <div class="col s6 full-height tui-no-shadow">
+          <button
+            class={
+              "tui-button content no-shadow full-width scoped-button-margin red-168 red-255-hover white-text",
+              disabled: @player.energy < @player.laser_energy_cost || !@target
+            }
+            :on-click="laser"
+          >[L]<span class="orange-255-text">[E]{@player.laser_energy_cost}</span></button>
+
+          <button
+            class={
+              "tui-button content no-shadow full-width scoped-button-margin red-168 red-255-hover white-text",
+              disabled: @player.energy < @player.railgun_energy_cost || !@target
+            }
+            :on-click="railgun"
+          >[R]<span class="orange-255-text">[E]{@player.railgun_energy_cost}</span></button>
+
+          <button
+            class={
+              "tui-button content no-shadow full-width scoped-button-margin red-168 red-255-hover white-text",
+              disabled: @player.energy < @player.missile_energy_cost || !@target
+            }
+            :on-click="missile"
+          >[M]<span class="orange-255-text">[E]{@player.missile_energy_cost}</span></button>
+        </div>
       </div>
     </fieldset>
   </div>

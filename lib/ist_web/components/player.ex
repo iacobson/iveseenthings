@@ -12,13 +12,15 @@ defmodule ISTWeb.Components.Player do
   alias Ecspanse.Entity
   alias IST.Components
 
-  prop tick, :string, from_context: :tick
-  prop state, :string, from_context: :state
-  prop token, :string, from_context: :token
+  prop(tick, :string, from_context: :tick)
+  prop(state, :string, from_context: :state)
+  prop(token, :string, from_context: :token)
 
   @doc "The BattleShip entity ID"
-  prop selected, :string, default: nil
-  data player, :struct, default: %{id: nil}
+  prop(selected, :string, default: nil)
+  prop(target, :string, default: nil)
+
+  data(player, :struct, default: %{id: nil})
 
   defstruct id: nil,
             name: nil,
@@ -61,6 +63,42 @@ defmodule ISTWeb.Components.Player do
       |> fetch_player()
 
     {:ok, socket}
+  end
+
+  def handle_event(event, _params, socket) do
+    player_id = socket.assigns.selected
+    token = socket.assigns.token
+
+    case event do
+      "boost_shields" ->
+        Ecspanse.event({IST.Events.BoostShields, player_id, ship_id: player_id}, token)
+
+      "maneuvers_evasion" ->
+        Ecspanse.event({IST.Events.PerformEvasiveManeuvers, player_id, ship_id: player_id}, token)
+
+      "deploy_drones" ->
+        Ecspanse.event({IST.Events.SpawnDrone, player_id, ship_id: player_id}, token)
+
+      "laser" ->
+        Ecspanse.event(
+          {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :laser},
+          token
+        )
+
+      "railgun" ->
+        Ecspanse.event(
+          {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :railgun},
+          token
+        )
+
+      "missile" ->
+        Ecspanse.event(
+          {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :missile},
+          token
+        )
+    end
+
+    {:noreply, socket}
   end
 
   defp fetch_player(socket) do
@@ -186,7 +224,7 @@ defmodule ISTWeb.Components.Player do
     Map.merge(player, %{
       current_evasion: evasion.value,
       maneuvers_evasion: evasion.maneuvers,
-      maneuvers_energy_cost: cost.value
+      maneuvers_evasion_energy_cost: cost.value
     })
   end
 

@@ -22,7 +22,7 @@
           </div>
           <div>
             <span>ENERGY</span>
-            <span class="orange-255-text">[e]</span>
+            <span class="orange-255-text">[E]</span>
             <span class="tui-shortcut orange-255-text">{@enemy.energy}</span>
           </div>
         </fieldset>

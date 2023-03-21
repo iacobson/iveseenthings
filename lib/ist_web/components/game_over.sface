@@ -1,0 +1,24 @@
+<style>
+  .scoped-content {
+  padding-top: 25%;
+  }
+</style>
+<div id="game_over" class="full-width full-height">
+  <div class="scoped-content center content">
+    <h1>
+      <div class="center content white-text">
+        <p>ALL THOSE MOMENTS WILL BE LOST IN TIME,</p>
+        <p>LIKE TEARS IN RAIN</p>
+      </div>
+    </h1>
+
+    <div class="content">
+      <div
+        class="tui-button center content tui-no-shadow cyan-168 cyan-255-hover white-text"
+        :on-click={JS.push("change_state", value: %{state: :main_menu}, target: :live_view)}
+      >
+        TIME TO DIE
+      </div>
+    </div>
+  </div>
+</div>

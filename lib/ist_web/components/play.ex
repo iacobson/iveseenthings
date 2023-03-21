@@ -13,15 +13,15 @@ defmodule ISTWeb.Components.Play do
   alias ISTWeb.Components.TargetLock, as: TargetLockComponent
   alias ISTWeb.Components.TargetedBy, as: TargetedByComponent
 
-  prop(tick, :string, from_context: :tick)
-  prop(state, :string, from_context: :state)
-  prop(token, :string, from_context: :token)
-  prop(user_id, :string, from_context: :user_id)
+  prop tick, :string, from_context: :tick
+  prop state, :string, from_context: :state
+  prop token, :string, from_context: :token
+  prop user_id, :string, from_context: :user_id
 
-  data(player_created, :boolean, default: false)
-  data(player_dead, :boolean, default: false)
-  data(current_player, :string, default: nil)
-  data(target_player, :string, default: nil)
+  data player_created, :boolean, default: false
+  data player_dead, :boolean, default: false
+  data current_player, :string, default: nil
+  data target_player, :string, default: nil
 
   # Create the player
   def update(assigns, %{assigns: %{player_created: false}} = socket) do
@@ -74,6 +74,7 @@ defmodule ISTWeb.Components.Play do
     if Ecspanse.Query.is_type?(entity, IST.Components.Human, socket.assigns.token) do
       assign(socket, player_dead: false, current_player: socket.assigns.user_id)
     else
+      send(self(), {:change_state, :game_over})
       assign(socket, player_dead: true, current_player: nil)
     end
   end

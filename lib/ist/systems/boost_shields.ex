@@ -18,7 +18,7 @@ defmodule IST.Systems.BoostShields do
     Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
   end
 
-  def do_run(events, frame) do
+  defp do_run(events, frame) do
     entities =
       events
       |> Stream.filter(fn

@@ -60,7 +60,7 @@ defmodule IST.Systems.BoostShieldsTest do
       delta: 1
     }
 
-    IST.Systems.BoostShields.run(frame)
+    IST.Systems.BoostShields.run(event, frame)
 
     {:ok, energy_component} =
       Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)

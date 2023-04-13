@@ -8,10 +8,7 @@ defmodule IST.Systems.SpawnDroneTest do
 
   setup do
     # This is the real game world.
-    {:ok, token} =
-      Ecspanse.new(IST.Game,
-        name: IST.GameTest
-      )
+    {:ok, token} = Ecspanse.new(IST.Game)
 
     player_id = UUID.uuid4()
     ISTWeb.Presence.track(self(), "iveseenthings", player_id, %{})
@@ -30,24 +27,36 @@ defmodule IST.Systems.SpawnDroneTest do
     :timer.sleep(100)
 
     IST.Debug.add_energy(player_entity, 10)
-    {:ok, energy_component} = Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+
+    {:ok, energy_component} =
+      Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+
     energy_value = energy_component.value
     assert energy_value >= 6
 
     {drones_component} =
-      Ecspanse.Query.select({IST.Components.Drones}, for_children_of: [player_entity]) |> Ecspanse.Query.one(token)
+      Ecspanse.Query.select({IST.Components.Drones}, for_children_of: [player_entity])
+      |> Ecspanse.Query.one(token)
 
     assert drones_component.count == 0
 
-    Ecspanse.event({IST.Events.SpawnDrone, player_entity.id, ship_id: player_entity.id}, token)
+    Ecspanse.event(
+      {IST.Events.SpawnDrone, player_entity.id, ship_id: player_entity.id},
+      [player_entity.id],
+      token
+    )
 
     # wait for the event to be processed
     :timer.sleep(100)
-    {:ok, energy_component} = Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+
+    {:ok, energy_component} =
+      Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+
     assert energy_component.value < energy_value
 
     {drones_component} =
-      Ecspanse.Query.select({IST.Components.Drones}, for_children_of: [player_entity]) |> Ecspanse.Query.one(token)
+      Ecspanse.Query.select({IST.Components.Drones}, for_children_of: [player_entity])
+      |> Ecspanse.Query.one(token)
 
     assert drones_component.count == 1
   end
@@ -56,24 +65,35 @@ defmodule IST.Systems.SpawnDroneTest do
     # wait for the player to be created
     :timer.sleep(100)
 
-    {:ok, energy_component} = Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+    {:ok, energy_component} =
+      Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+
     energy_value = energy_component.value
     assert energy_value < 5
 
     {drones_component} =
-      Ecspanse.Query.select({IST.Components.Drones}, for_children_of: [player_entity]) |> Ecspanse.Query.one(token)
+      Ecspanse.Query.select({IST.Components.Drones}, for_children_of: [player_entity])
+      |> Ecspanse.Query.one(token)
 
     assert drones_component.count == 0
 
-    Ecspanse.event({IST.Events.SpawnDrone, player_entity.id, ship_id: player_entity.id}, token)
+    Ecspanse.event(
+      {IST.Events.SpawnDrone, player_entity.id, ship_id: player_entity.id},
+      [player_entity.id],
+      token
+    )
 
     # wait for the event to be processed
     :timer.sleep(100)
-    {:ok, energy_component} = Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+
+    {:ok, energy_component} =
+      Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+
     assert energy_component.value >= energy_value
 
     {drones_component} =
-      Ecspanse.Query.select({IST.Components.Drones}, for_children_of: [player_entity]) |> Ecspanse.Query.one(token)
+      Ecspanse.Query.select({IST.Components.Drones}, for_children_of: [player_entity])
+      |> Ecspanse.Query.one(token)
 
     assert drones_component.count == 0
   end

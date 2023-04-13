@@ -124,6 +124,7 @@ defmodule IST.Systems.FireWeapon do
             accuracy: accuracy.value,
             shields_efficiency: efficiency.percent
           },
+          [target_ship_entity.id, ship_entity.id],
           token
         )
 

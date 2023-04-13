@@ -83,6 +83,7 @@ defmodule IST.Systems.BotAction do
       Ecspanse.event(
         {IST.Events.AcquireTargetLock, random_target.id,
          hunter_id: entity.id, target_id: random_target.id},
+        [entity.id, random_target.id],
         frame.token
       )
     end
@@ -91,6 +92,7 @@ defmodule IST.Systems.BotAction do
   defp perform_evasive_maneuvers(entity, frame) do
     Ecspanse.event(
       {IST.Events.PerformEvasiveManeuvers, entity.id, ship_id: entity.id},
+      [entity.id],
       frame.token
     )
   end
@@ -98,6 +100,7 @@ defmodule IST.Systems.BotAction do
   defp boost_shields(entity, frame) do
     Ecspanse.event(
       {IST.Events.BoostShields, entity.id, ship_id: entity.id},
+      [entity.id],
       frame.token
     )
   end
@@ -105,6 +108,7 @@ defmodule IST.Systems.BotAction do
   defp spawn_drone(entity, frame) do
     Ecspanse.event(
       {IST.Events.SpawnDrone, entity.id, ship_id: entity.id},
+      [entity.id],
       frame.token
     )
   end
@@ -112,6 +116,7 @@ defmodule IST.Systems.BotAction do
   defp fire_laser(entity, frame) do
     Ecspanse.event(
       {IST.Events.FireWeapon, entity.id, ship_id: entity.id, weapon: :laser},
+      [entity.id],
       frame.token
     )
   end
@@ -119,6 +124,7 @@ defmodule IST.Systems.BotAction do
   defp fire_railgun(entity, frame) do
     Ecspanse.event(
       {IST.Events.FireWeapon, entity.id, ship_id: entity.id, weapon: :railgun},
+      [entity.id],
       frame.token
     )
   end
@@ -126,6 +132,7 @@ defmodule IST.Systems.BotAction do
   defp fire_missile(entity, frame) do
     Ecspanse.event(
       {IST.Events.FireWeapon, entity.id, ship_id: entity.id, weapon: :missile},
+      [entity.id],
       frame.token
     )
   end

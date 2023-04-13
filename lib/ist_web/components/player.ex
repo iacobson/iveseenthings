@@ -71,29 +71,40 @@ defmodule ISTWeb.Components.Player do
 
     case event do
       "boost_shields" ->
-        Ecspanse.event({IST.Events.BoostShields, player_id, ship_id: player_id}, token)
+        Ecspanse.event(
+          {IST.Events.BoostShields, player_id, ship_id: player_id},
+          [player_id],
+          token
+        )
 
       "maneuvers_evasion" ->
-        Ecspanse.event({IST.Events.PerformEvasiveManeuvers, player_id, ship_id: player_id}, token)
+        Ecspanse.event(
+          {IST.Events.PerformEvasiveManeuvers, player_id, ship_id: player_id},
+          [player_id],
+          token
+        )
 
       "deploy_drones" ->
-        Ecspanse.event({IST.Events.SpawnDrone, player_id, ship_id: player_id}, token)
+        Ecspanse.event({IST.Events.SpawnDrone, player_id, ship_id: player_id}, [player_id], token)
 
       "laser" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :laser},
+          [player_id],
           token
         )
 
       "railgun" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :railgun},
+          [player_id],
           token
         )
 
       "missile" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :missile},
+          [player_id],
           token
         )
     end

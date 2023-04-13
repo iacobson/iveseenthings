@@ -53,6 +53,7 @@ defmodule ISTWeb.Components.Play do
     Ecspanse.event(
       {IST.Events.AcquireTargetLock, target_id,
        hunter_id: socket.assigns.current_player, target_id: target_id},
+      [socket.assigns.current_player, target_id],
       socket.assigns.token
     )
 
@@ -60,6 +61,7 @@ defmodule ISTWeb.Components.Play do
   end
 
   defp create_player(socket) do
+    # for_entity_ids list not needed because the player is created
     Ecspanse.event(
       {IST.Events.AddPlayer, socket.assigns.user_id, player_id: socket.assigns.user_id},
       socket.assigns.token

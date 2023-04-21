@@ -72,40 +72,48 @@ defmodule ISTWeb.Components.Player do
     case event do
       "boost_shields" ->
         Ecspanse.event(
-          {IST.Events.BoostShields, player_id, ship_id: player_id},
-          [player_id],
-          token
+          {IST.Events.BoostShields, ship_id: player_id},
+          token,
+          batch_key: player_id,
+          for_entities: [Ecspanse.Entity.build(player_id)]
         )
 
       "maneuvers_evasion" ->
         Ecspanse.event(
-          {IST.Events.PerformEvasiveManeuvers, player_id, ship_id: player_id},
-          [player_id],
-          token
+          {IST.Events.PerformEvasiveManeuvers, ship_id: player_id},
+          token,
+          batch_key: player_id,
+          for_entities: [Ecspanse.Entity.build(player_id)]
         )
 
       "deploy_drones" ->
-        Ecspanse.event({IST.Events.SpawnDrone, player_id, ship_id: player_id}, [player_id], token)
+        Ecspanse.event({IST.Events.SpawnDrone, ship_id: player_id}, token,
+          batch_key: player_id,
+          for_entities: [Ecspanse.Entity.build(player_id)]
+        )
 
       "laser" ->
         Ecspanse.event(
-          {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :laser},
-          [player_id],
-          token
+          {IST.Events.FireWeapon, ship_id: player_id, weapon: :laser},
+          token,
+          batch_key: player_id,
+          for_entities: [Ecspanse.Entity.build(player_id)]
         )
 
       "railgun" ->
         Ecspanse.event(
-          {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :railgun},
-          [player_id],
-          token
+          {IST.Events.FireWeapon, ship_id: player_id, weapon: :railgun},
+          token,
+          batch_key: player_id,
+          for_entities: [Ecspanse.Entity.build(player_id)]
         )
 
       "missile" ->
         Ecspanse.event(
-          {IST.Events.FireWeapon, player_id, ship_id: player_id, weapon: :missile},
-          [player_id],
-          token
+          {IST.Events.FireWeapon, ship_id: player_id, weapon: :missile},
+          token,
+          batch_key: player_id,
+          for_entities: [Ecspanse.Entity.build(player_id)]
         )
     end
 

@@ -51,10 +51,14 @@ defmodule ISTWeb.Components.Play do
 
   def handle_event("select_player", %{"player_id" => target_id}, socket) do
     Ecspanse.event(
-      {IST.Events.AcquireTargetLock, target_id,
+      {IST.Events.AcquireTargetLock,
        hunter_id: socket.assigns.current_player, target_id: target_id},
-      [socket.assigns.current_player, target_id],
-      socket.assigns.token
+      socket.assigns.token,
+      batch_key: target_id,
+      for_entity_ids: [
+        Ecspanse.Entity.build(socket.assigns.current_player),
+        Ecspanse.Entity.build(target_id)
+      ]
     )
 
     {:noreply, socket}
@@ -63,8 +67,9 @@ defmodule ISTWeb.Components.Play do
   defp create_player(socket) do
     # for_entity_ids list not needed because the player is created
     Ecspanse.event(
-      {IST.Events.AddPlayer, socket.assigns.user_id, player_id: socket.assigns.user_id},
-      socket.assigns.token
+      {IST.Events.AddPlayer, player_id: socket.assigns.user_id},
+      socket.assigns.token,
+      batch_key: socket.assigns.user_id
     )
 
     assign(socket, player_created: true)

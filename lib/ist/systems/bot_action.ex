@@ -81,59 +81,65 @@ defmodule IST.Systems.BotAction do
       random_target = Enum.random(target_entities)
 
       Ecspanse.event(
-        {IST.Events.AcquireTargetLock, random_target.id,
-         hunter_id: entity.id, target_id: random_target.id},
-        [entity.id, random_target.id],
-        frame.token
+        {IST.Events.AcquireTargetLock, hunter_id: entity.id, target_id: random_target.id},
+        frame.token,
+        batch_key: random_target.id,
+        for_entities: [entity, random_target]
       )
     end
   end
 
   defp perform_evasive_maneuvers(entity, frame) do
     Ecspanse.event(
-      {IST.Events.PerformEvasiveManeuvers, entity.id, ship_id: entity.id},
-      [entity.id],
-      frame.token
+      {IST.Events.PerformEvasiveManeuvers, ship_id: entity.id},
+      frame.token,
+      batch_key: entity.id,
+      for_entities: [entity]
     )
   end
 
   defp boost_shields(entity, frame) do
     Ecspanse.event(
-      {IST.Events.BoostShields, entity.id, ship_id: entity.id},
-      [entity.id],
-      frame.token
+      {IST.Events.BoostShields, ship_id: entity.id},
+      frame.token,
+      batch_key: entity.id,
+      for_entities: [entity]
     )
   end
 
   defp spawn_drone(entity, frame) do
     Ecspanse.event(
-      {IST.Events.SpawnDrone, entity.id, ship_id: entity.id},
-      [entity.id],
-      frame.token
+      {IST.Events.SpawnDrone, ship_id: entity.id},
+      frame.token,
+      batch_key: entity.id,
+      for_entities: [entity]
     )
   end
 
   defp fire_laser(entity, frame) do
     Ecspanse.event(
-      {IST.Events.FireWeapon, entity.id, ship_id: entity.id, weapon: :laser},
-      [entity.id],
-      frame.token
+      {IST.Events.FireWeapon, ship_id: entity.id, weapon: :laser},
+      frame.token,
+      batch_key: entity.id,
+      for_entities: [entity]
     )
   end
 
   defp fire_railgun(entity, frame) do
     Ecspanse.event(
-      {IST.Events.FireWeapon, entity.id, ship_id: entity.id, weapon: :railgun},
-      [entity.id],
-      frame.token
+      {IST.Events.FireWeapon, ship_id: entity.id, weapon: :railgun},
+      frame.token,
+      batch_key: entity.id,
+      for_entities: [entity]
     )
   end
 
   defp fire_missile(entity, frame) do
     Ecspanse.event(
-      {IST.Events.FireWeapon, entity.id, ship_id: entity.id, weapon: :missile},
-      [entity.id],
-      frame.token
+      {IST.Events.FireWeapon, ship_id: entity.id, weapon: :missile},
+      frame.token,
+      batch_key: entity.id,
+      for_entities: [entity]
     )
   end
 end

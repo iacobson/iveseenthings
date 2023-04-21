@@ -13,7 +13,7 @@ defmodule IST.Systems.SpawnDroneTest do
     player_id = UUID.uuid4()
     ISTWeb.Presence.track(self(), "iveseenthings", player_id, %{})
 
-    Ecspanse.event({IST.Events.AddPlayer, player_id, player_id: player_id}, token)
+    Ecspanse.event({IST.Events.AddPlayer, player_id: player_id}, token, batch_key: player_id)
 
     {:ok, _pid} = start_supervised({IST.Debug, token})
 
@@ -41,9 +41,10 @@ defmodule IST.Systems.SpawnDroneTest do
     assert drones_component.count == 0
 
     Ecspanse.event(
-      {IST.Events.SpawnDrone, player_entity.id, ship_id: player_entity.id},
-      [player_entity.id],
-      token
+      {IST.Events.SpawnDrone, ship_id: player_entity.id},
+      token,
+      batch_key: player_entity.id,
+      for_entities: [player_entity]
     )
 
     # wait for the event to be processed
@@ -78,9 +79,10 @@ defmodule IST.Systems.SpawnDroneTest do
     assert drones_component.count == 0
 
     Ecspanse.event(
-      {IST.Events.SpawnDrone, player_entity.id, ship_id: player_entity.id},
-      [player_entity.id],
-      token
+      {IST.Events.SpawnDrone, ship_id: player_entity.id},
+      token,
+      batch_key: player_entity.id,
+      for_entities: [player_entity]
     )
 
     # wait for the event to be processed

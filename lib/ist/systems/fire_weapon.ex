@@ -116,7 +116,6 @@ defmodule IST.Systems.FireWeapon do
         Ecspanse.event(
           {
             IST.Events.DealDamage,
-            target_ship_entity.id,
             hunter_id: ship_entity.id,
             target_id: target_ship_entity.id,
             damage_type: weapon_type,
@@ -124,8 +123,9 @@ defmodule IST.Systems.FireWeapon do
             accuracy: accuracy.value,
             shields_efficiency: efficiency.percent
           },
-          [target_ship_entity.id, ship_entity.id],
-          token
+          token,
+          batch_key: target_ship_entity.id,
+          for_entities: [target_ship_entity, ship_entity]
         )
 
         update_ship_energy = {ship_energy, value: ship_energy.value - energy_cost.value}

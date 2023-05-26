@@ -33,7 +33,7 @@ defmodule IST.ETSParent do
   def handle_info({:link_world, world_token}, state) do
     # linking with the world process.
     # If the world process dies, this process should and associated ETS should termiante as well
-    {:ok, %{world_pid: world_pid}} = Ecspanse.fetch_world_data(world_token)
+    {:ok, %{pid: world_pid}} = Ecspanse.fetch_world_process(world_token)
     Process.link(world_pid)
     {:noreply, state}
   end

@@ -19,7 +19,7 @@ defmodule IST.Systems.CheckTargetAlive do
     )
     |> Query.stream(frame.token)
     |> Stream.filter(fn {_entity, children, parents} ->
-      Enum.empty?(children.list) || Enum.empty?(parents.list)
+      Enum.empty?(children.entities) || Enum.empty?(parents.entities)
     end)
     |> Enum.map(fn {entity, _children, _parents} -> entity end)
     |> Ecspanse.Command.despawn_entities!()

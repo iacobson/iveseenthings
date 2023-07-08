@@ -146,7 +146,7 @@ defmodule ISTWeb.Components.Player do
 
     case res do
       {energy, hull, level, children} ->
-        children = children.list
+        children = children.entities
 
         %Player{
           player
@@ -196,7 +196,7 @@ defmodule ISTWeb.Components.Player do
       )
       |> Query.one(token)
 
-    children = children.list
+    children = children.entities
 
     %Player{
       id: entity.id,

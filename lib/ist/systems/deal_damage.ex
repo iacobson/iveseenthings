@@ -54,7 +54,7 @@ defmodule IST.Systems.DealDamage do
     |> Stream.map(fn {target_entity, hull, target_level, children} ->
       event = Enum.find(events, fn %{target_entity: entity} -> entity == target_entity end)
 
-      do_deal_damage(event, hull, target_level, children.list, token)
+      do_deal_damage(event, hull, target_level, children.entities, token)
     end)
     |> Enum.to_list()
     |> List.flatten()

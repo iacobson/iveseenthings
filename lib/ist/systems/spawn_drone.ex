@@ -42,7 +42,7 @@ defmodule IST.Systems.SpawnDrone do
     |> Query.stream(token)
     |> Stream.map(fn {energy, children} ->
       drones_entity =
-        children.list
+        children.entities
         |> Enum.find(fn entity ->
           Ecspanse.Query.has_component?(entity, IST.Components.Drones, token)
         end)

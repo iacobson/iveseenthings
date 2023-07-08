@@ -9,15 +9,15 @@ defmodule ISTWeb.Components.TargetedBy do
   alias IST.Components
   alias Phoenix.LiveView.JS
 
-  prop(tick, :string, from_context: :tick)
-  prop(state, :string, from_context: :state)
-  prop(token, :string, from_context: :token)
+  prop tick, :string, from_context: :tick
+  prop state, :string, from_context: :state
+  prop token, :string, from_context: :token
 
-  prop(player, :string, default: nil)
-  prop(select_player_event, :event)
-  prop(selected, :string, default: nil)
+  prop player, :string, default: nil
+  prop select_player_event, :event
+  prop selected, :string, default: nil
 
-  data(targeting_enemies, :list, default: [])
+  data targeting_enemies, :list, default: []
 
   def update(assigns, socket) do
     socket =

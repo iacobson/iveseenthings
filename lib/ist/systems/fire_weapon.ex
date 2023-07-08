@@ -58,7 +58,7 @@ defmodule IST.Systems.FireWeapon do
       weapon_module = Map.fetch!(@weapons, weapon_type)
 
       weapon_entity =
-        children.list
+        children.entities
         |> Enum.find(fn entity ->
           Ecspanse.Query.is_type?(entity, weapon_module, token)
         end)
@@ -71,7 +71,7 @@ defmodule IST.Systems.FireWeapon do
         )
 
       target_entity =
-        children.list
+        children.entities
         |> Enum.find(fn entity ->
           Query.is_type?(entity, IST.Components.Target, token)
         end)
@@ -109,7 +109,7 @@ defmodule IST.Systems.FireWeapon do
            {:ok, target_children} <-
              Query.fetch_component(target_entity, Ecspanse.Component.Children, token),
            # Alaways need to check if the target is still alive
-           [target_ship_entity] <- target_children.list do
+           [target_ship_entity] <- target_children.entities do
         # Use the target as event key.
         # We want damage events for the same target to be processed in separate batches
         # to avoid race conditions

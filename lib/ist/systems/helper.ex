@@ -29,7 +29,7 @@ defmodule IST.Systems.Helper do
 
     Ecspanse.Command.spawn_entities!([
       {Ecspanse.Entity,
-       name: name,
+       id: name,
        components: [
          Components.EnergyTimer,
          {Components.BattleShip, name: name},

@@ -74,46 +74,38 @@ defmodule ISTWeb.Components.Player do
         Ecspanse.event(
           {IST.Events.BoostShields, ship_id: player_id},
           token,
-          batch_key: player_id,
-          for_entities: [Ecspanse.Entity.build(player_id)]
+          batch_key: player_id
         )
 
       "maneuvers_evasion" ->
         Ecspanse.event(
           {IST.Events.PerformEvasiveManeuvers, ship_id: player_id},
           token,
-          batch_key: player_id,
-          for_entities: [Ecspanse.Entity.build(player_id)]
+          batch_key: player_id
         )
 
       "deploy_drones" ->
-        Ecspanse.event({IST.Events.SpawnDrone, ship_id: player_id}, token,
-          batch_key: player_id,
-          for_entities: [Ecspanse.Entity.build(player_id)]
-        )
+        Ecspanse.event({IST.Events.SpawnDrone, ship_id: player_id}, token, batch_key: player_id)
 
       "laser" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, ship_id: player_id, weapon: :laser},
           token,
-          batch_key: player_id,
-          for_entities: [Ecspanse.Entity.build(player_id)]
+          batch_key: player_id
         )
 
       "railgun" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, ship_id: player_id, weapon: :railgun},
           token,
-          batch_key: player_id,
-          for_entities: [Ecspanse.Entity.build(player_id)]
+          batch_key: player_id
         )
 
       "missile" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, ship_id: player_id, weapon: :missile},
           token,
-          batch_key: player_id,
-          for_entities: [Ecspanse.Entity.build(player_id)]
+          batch_key: player_id
         )
     end
 

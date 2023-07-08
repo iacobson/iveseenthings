@@ -43,8 +43,7 @@ defmodule IST.Systems.SpawnDroneTest do
     Ecspanse.event(
       {IST.Events.SpawnDrone, ship_id: player_entity.id},
       token,
-      batch_key: player_entity.id,
-      for_entities: [player_entity]
+      batch_key: player_entity.id
     )
 
     # wait for the event to be processed
@@ -81,8 +80,7 @@ defmodule IST.Systems.SpawnDroneTest do
     Ecspanse.event(
       {IST.Events.SpawnDrone, ship_id: player_entity.id},
       token,
-      batch_key: player_entity.id,
-      for_entities: [player_entity]
+      batch_key: player_entity.id
     )
 
     # wait for the event to be processed

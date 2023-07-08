@@ -124,8 +124,7 @@ defmodule IST.Systems.FireWeapon do
             shields_efficiency: efficiency.percent
           },
           token,
-          batch_key: target_ship_entity.id,
-          for_entities: [target_ship_entity, ship_entity]
+          batch_key: target_ship_entity.id
         )
 
         update_ship_energy = {ship_energy, value: ship_energy.value - energy_cost.value}

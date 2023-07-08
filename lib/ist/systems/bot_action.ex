@@ -83,8 +83,7 @@ defmodule IST.Systems.BotAction do
       Ecspanse.event(
         {IST.Events.AcquireTargetLock, hunter_id: entity.id, target_id: random_target.id},
         frame.token,
-        batch_key: random_target.id,
-        for_entities: [entity, random_target]
+        batch_key: random_target.id
       )
     end
   end
@@ -93,8 +92,7 @@ defmodule IST.Systems.BotAction do
     Ecspanse.event(
       {IST.Events.PerformEvasiveManeuvers, ship_id: entity.id},
       frame.token,
-      batch_key: entity.id,
-      for_entities: [entity]
+      batch_key: entity.id
     )
   end
 
@@ -102,8 +100,7 @@ defmodule IST.Systems.BotAction do
     Ecspanse.event(
       {IST.Events.BoostShields, ship_id: entity.id},
       frame.token,
-      batch_key: entity.id,
-      for_entities: [entity]
+      batch_key: entity.id
     )
   end
 
@@ -111,8 +108,7 @@ defmodule IST.Systems.BotAction do
     Ecspanse.event(
       {IST.Events.SpawnDrone, ship_id: entity.id},
       frame.token,
-      batch_key: entity.id,
-      for_entities: [entity]
+      batch_key: entity.id
     )
   end
 
@@ -120,8 +116,7 @@ defmodule IST.Systems.BotAction do
     Ecspanse.event(
       {IST.Events.FireWeapon, ship_id: entity.id, weapon: :laser},
       frame.token,
-      batch_key: entity.id,
-      for_entities: [entity]
+      batch_key: entity.id
     )
   end
 
@@ -129,8 +124,7 @@ defmodule IST.Systems.BotAction do
     Ecspanse.event(
       {IST.Events.FireWeapon, ship_id: entity.id, weapon: :railgun},
       frame.token,
-      batch_key: entity.id,
-      for_entities: [entity]
+      batch_key: entity.id
     )
   end
 
@@ -138,8 +132,7 @@ defmodule IST.Systems.BotAction do
     Ecspanse.event(
       {IST.Events.FireWeapon, ship_id: entity.id, weapon: :missile},
       frame.token,
-      batch_key: entity.id,
-      for_entities: [entity]
+      batch_key: entity.id
     )
   end
 end

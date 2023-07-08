@@ -43,7 +43,7 @@ config :phoenix, :json_library, Jason
 
 # the max number of players allowed in the game at once (bots or humans)
 config :iveseenthings, :player_count, 100
-config :iveseenthings, :fps_limit, 24
+config :iveseenthings, :fps_limit, 100
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

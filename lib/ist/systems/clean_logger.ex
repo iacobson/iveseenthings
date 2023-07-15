@@ -9,7 +9,7 @@ defmodule IST.Systems.CleanLogger do
   @impl true
   def run(frame) do
     {:ok, battle_logger_resource} =
-      Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger, frame.token)
+      Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger)
 
     table = battle_logger_resource.ecs_table
 

@@ -11,7 +11,6 @@ defmodule ISTWeb.Live.Game do
   alias ISTWeb.Components.Play, as: PlayComponent
 
   prop socket_connected, :boolean, default: false
-  prop token, :string, default: nil
   prop user_id, :string, default: nil
 
   data state, :atom, default: :main_menu, values!: [:main_menu, :observer, :play, :game_over]

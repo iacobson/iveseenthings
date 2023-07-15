@@ -36,11 +36,11 @@ defmodule IST.Systems.FireWeapon do
       end)
 
     if Enum.any?(events) do
-      fire_weapon(events, frame.token)
+      fire_weapon(events)
     end
   end
 
-  defp fire_weapon(events, token) do
+  defp fire_weapon(events) do
     entities = Enum.map(events, fn %{entity: entity} -> entity end)
 
     Query.select(
@@ -52,7 +52,11 @@ defmodule IST.Systems.FireWeapon do
       with: [IST.Components.BattleShip],
       for: entities
     )
-    |> Query.stream(token)
+    |> Query.stream()
+    # Alaways need to check if the target is still alive
+    # Use the target as event key.
+    # We want damage events for the same target to be processed in separate batches
+    # to avoid race conditions
     |> Stream.map(fn {ship_entity, energy, children} ->
       weapon_type = Enum.find(events, fn %{entity: entity} -> entity == ship_entity end).weapon
       weapon_module = Map.fetch!(@weapons, weapon_type)
@@ -60,20 +64,19 @@ defmodule IST.Systems.FireWeapon do
       weapon_entity =
         children.entities
         |> Enum.find(fn entity ->
-          Ecspanse.Query.is_type?(entity, weapon_module, token)
+          Ecspanse.Query.is_type?(entity, weapon_module)
         end)
 
       {:ok, {energy_cost}} =
         Ecspanse.Query.fetch_components(
           weapon_entity,
-          {IST.Components.EnergyCost},
-          token
+          {IST.Components.EnergyCost}
         )
 
       target_entity =
         children.entities
         |> Enum.find(fn entity ->
-          Query.is_type?(entity, IST.Components.Target, token)
+          Query.is_type?(entity, IST.Components.Target)
         end)
 
       %{
@@ -103,16 +106,11 @@ defmodule IST.Systems.FireWeapon do
       with {:ok, {damage, accuracy, efficiency}} <-
              Ecspanse.Query.fetch_components(
                weapon_entity,
-               {IST.Components.Damage, IST.Components.Accuracy, IST.Components.ShieldsEfficiency},
-               token
+               {IST.Components.Damage, IST.Components.Accuracy, IST.Components.ShieldsEfficiency}
              ),
            {:ok, target_children} <-
-             Query.fetch_component(target_entity, Ecspanse.Component.Children, token),
-           # Alaways need to check if the target is still alive
+             Query.fetch_component(target_entity, Ecspanse.Component.Children),
            [target_ship_entity] <- target_children.entities do
-        # Use the target as event key.
-        # We want damage events for the same target to be processed in separate batches
-        # to avoid race conditions
         Ecspanse.event(
           {
             IST.Events.DealDamage,
@@ -123,7 +121,6 @@ defmodule IST.Systems.FireWeapon do
             accuracy: accuracy.value,
             shields_efficiency: efficiency.percent
           },
-          token,
           batch_key: target_ship_entity.id
         )
 

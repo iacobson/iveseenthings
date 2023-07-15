@@ -30,28 +30,27 @@ defmodule IST.Systems.EvasiveManeuvers do
       end)
 
     if Enum.any?(entities) do
-      perform_evasive_maneuvers(entities, frame.token)
+      perform_evasive_maneuvers(entities)
     end
   end
 
-  defp perform_evasive_maneuvers(entities, token) do
+  defp perform_evasive_maneuvers(entities) do
     Query.select({IST.Components.EnergyStorage, Ecspanse.Component.Children},
       with: [IST.Components.BattleShip],
       for: entities
     )
-    |> Query.stream(token)
+    |> Query.stream()
     |> Stream.map(fn {energy_component, children} ->
       evastion_entity =
         children.entities
         |> Enum.find(fn entity ->
-          Ecspanse.Query.has_component?(entity, IST.Components.Evasion, token)
+          Ecspanse.Query.has_component?(entity, IST.Components.Evasion)
         end)
 
       {:ok, {evasion_component, energy_cost_component, evasion_timer}} =
         Ecspanse.Query.fetch_components(
           evastion_entity,
-          {IST.Components.Evasion, IST.Components.EnergyCost, IST.Components.EvasionTimer},
-          token
+          {IST.Components.Evasion, IST.Components.EnergyCost, IST.Components.EvasionTimer}
         )
 
       %{

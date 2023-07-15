@@ -7,7 +7,6 @@ defmodule ISTWeb.Hook.User do
 
   def on_mount(:user_status, _params, _session, socket) do
     with {:ok, socket} <- check_socket_connected(socket),
-         {:ok, socket} <- fetch_token(socket),
          {:ok, socket} <- assign_user_id(socket) do
       {:cont, socket}
     end
@@ -20,21 +19,6 @@ defmodule ISTWeb.Hook.User do
     else
       socket = assign(socket, socket_connected: false)
       {:cont, socket}
-    end
-  end
-
-  defp fetch_token(socket) do
-    case Ecspanse.fetch_token(IST.Game) do
-      {:ok, token} ->
-        socket =
-          socket
-          |> assign(token: token)
-          |> Surface.Components.Context.put(token: token)
-
-        {:ok, socket}
-
-      {:error, _} ->
-        {:halt, socket}
     end
   end
 

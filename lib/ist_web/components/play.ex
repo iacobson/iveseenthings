@@ -15,7 +15,7 @@ defmodule ISTWeb.Components.Play do
 
   prop tick, :string, from_context: :tick
   prop state, :string, from_context: :state
-  prop token, :string, from_context: :token
+
   prop user_id, :string, from_context: :user_id
 
   data player_created, :boolean, default: false
@@ -53,7 +53,6 @@ defmodule ISTWeb.Components.Play do
     Ecspanse.event(
       {IST.Events.AcquireTargetLock,
        hunter_id: socket.assigns.current_player, target_id: target_id},
-      socket.assigns.token,
       batch_key: target_id,
       for_entity_ids: [
         Ecspanse.Entity.build(socket.assigns.current_player),
@@ -68,7 +67,6 @@ defmodule ISTWeb.Components.Play do
     # for_entity_ids list not needed because the player is created
     Ecspanse.event(
       {IST.Events.AddPlayer, player_id: socket.assigns.user_id},
-      socket.assigns.token,
       batch_key: socket.assigns.user_id
     )
 
@@ -78,7 +76,7 @@ defmodule ISTWeb.Components.Play do
   defp check_player_alive(socket) do
     entity = Ecspanse.Entity.build(socket.assigns.user_id)
 
-    if Ecspanse.Query.is_type?(entity, IST.Components.Human, socket.assigns.token) do
+    if Ecspanse.Query.is_type?(entity, IST.Components.Human) do
       assign(socket, player_dead: false, current_player: socket.assigns.user_id)
     else
       send(self(), {:change_state, :game_over})
@@ -99,13 +97,13 @@ defmodule ISTWeb.Components.Play do
         entity = Ecspanse.Entity.build(player_id)
 
         with children when is_list(children) and length(children) > 0 <-
-               Query.list_children(entity, socket.assigns.token),
+               Query.list_children(entity),
              %Ecspanse.Entity{} = target_entity <-
                Enum.find(children, fn child ->
-                 Query.is_type?(child, IST.Components.Target, socket.assigns.token)
+                 Query.is_type?(child, IST.Components.Target)
                end),
              # Alaways need to check if the target is still alive
-             [target_ship_entity] <- Query.list_children(target_entity, socket.assigns.token) do
+             [target_ship_entity] <- Query.list_children(target_entity) do
           assign(socket, target_player: target_ship_entity.id)
         else
           _ ->

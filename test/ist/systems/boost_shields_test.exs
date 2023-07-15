@@ -4,36 +4,35 @@ defmodule IST.Systems.BoostShieldsTest do
   """
   use ExUnit.Case, async: false
 
-  defmodule TestWorld do
+  defmodule TestServer do
     @moduledoc false
-    use Ecspanse.World,
-      otp_app: :iveseenthings
+    use Ecspanse
 
     @impl true
-    def setup(world) do
-      world
+    def setup(data) do
+      data
     end
   end
 
   setup do
-    {:ok, token} = Ecspanse.new(TestWorld, name: TestWorld)
+    start_supervised({TestServer, :test})
     player_id = UUID.uuid4()
 
-    Ecspanse.System.debug(token)
+    Ecspanse.System.debug()
 
     player_entity =
       Ecspanse.Command.spawn_entity!(
         {Ecspanse.Entity, name: player_id, components: [IST.Components.BattleShip]}
       )
 
-    {:ok, token: token, player_entity: player_entity}
+    {:ok, player_entity: player_entity}
   end
 
-  test "boost the shields if enough energy", %{token: token, player_entity: player_entity} do
+  test "boost the shields if enough energy", %{player_entity: player_entity} do
     Ecspanse.Command.add_component!(player_entity, {IST.Components.EnergyStorage, value: 10})
 
     {:ok, energy_component} =
-      Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+      Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage)
 
     assert energy_component.value == 10
 
@@ -54,8 +53,7 @@ defmodule IST.Systems.BoostShieldsTest do
       inserted_at: System.os_time()
     }
 
-    frame = %Ecspanse.World.Frame{
-      token: token,
+    frame = %Ecspanse.Frame{
       event_batches: [[event]],
       delta: 1
     }
@@ -63,12 +61,12 @@ defmodule IST.Systems.BoostShieldsTest do
     IST.Systems.BoostShields.run(event, frame)
 
     {:ok, energy_component} =
-      Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage, token)
+      Ecspanse.Query.fetch_component(player_entity, IST.Components.EnergyStorage)
 
     assert energy_component.value == 6
 
     {:ok, shields_component} =
-      Ecspanse.Query.fetch_component(shields_entity, IST.Components.Shields, token)
+      Ecspanse.Query.fetch_component(shields_entity, IST.Components.Shields)
 
     assert shields_component.hp == 10
   end

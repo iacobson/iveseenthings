@@ -7,16 +7,16 @@ defmodule IST.Systems.InitGame do
 
   @impl true
   def run(frame) do
-    {:ok, world_state} = Ecspanse.Query.fetch_resource(Ecspanse.Resource.State, frame.token)
-    Ecspanse.Command.update_resource!(world_state, value: :play)
+    {:ok, game_state} = Ecspanse.Query.fetch_resource(Ecspanse.Resource.State)
+    Ecspanse.Command.update_resource!(game_state, value: :play)
 
     # The ETS is started from a Task, so it is temporary.
     # Creating a dedicated server that would act as parent for the ETS table
     {:ok, ets_heir_pid} =
-      DynamicSupervisor.start_child(IST.DynamicSupervisor, {IST.ETSParent, []})
+      GenServer.start_link(IST.ETSParent, [])
 
-    # link the world process with the ETS parent process
-    send(ets_heir_pid, {:link_world, frame.token})
+    # link the Ecspanse Server process with the ETS parent process
+    send(ets_heir_pid, :link_ecspanse_server)
 
     battle_logger_ecs_table =
       :ets.new(String.to_atom("battle_log:#{UUID.uuid4()}"), [

@@ -14,7 +14,6 @@ defmodule ISTWeb.Components.Player do
 
   prop(tick, :string, from_context: :tick)
   prop(state, :string, from_context: :state)
-  prop(token, :string, from_context: :token)
 
   @doc "The BattleShip entity ID"
   prop(selected, :string, default: nil)
@@ -67,44 +66,38 @@ defmodule ISTWeb.Components.Player do
 
   def handle_event(event, _params, socket) do
     player_id = socket.assigns.selected
-    token = socket.assigns.token
 
     case event do
       "boost_shields" ->
         Ecspanse.event(
           {IST.Events.BoostShields, ship_id: player_id},
-          token,
           batch_key: player_id
         )
 
       "maneuvers_evasion" ->
         Ecspanse.event(
           {IST.Events.PerformEvasiveManeuvers, ship_id: player_id},
-          token,
           batch_key: player_id
         )
 
       "deploy_drones" ->
-        Ecspanse.event({IST.Events.SpawnDrone, ship_id: player_id}, token, batch_key: player_id)
+        Ecspanse.event({IST.Events.SpawnDrone, ship_id: player_id}, batch_key: player_id)
 
       "laser" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, ship_id: player_id, weapon: :laser},
-          token,
           batch_key: player_id
         )
 
       "railgun" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, ship_id: player_id, weapon: :railgun},
-          token,
           batch_key: player_id
         )
 
       "missile" ->
         Ecspanse.event(
           {IST.Events.FireWeapon, ship_id: player_id, weapon: :missile},
-          token,
           batch_key: player_id
         )
     end
@@ -118,23 +111,23 @@ defmodule ISTWeb.Components.Player do
     player =
       if socket.assigns.selected && socket.assigns.player.id == socket.assigns.selected do
         # update just the dynamic values
-        update_player(entity, socket.assigns.player, socket.assigns.token)
+        update_player(entity, socket.assigns.player)
       else
         # build the full player structure only when changing the selected player
-        build_player(entity, socket.assigns.token)
+        build_player(entity)
       end
 
     assign(socket, player: player)
   end
 
-  defp update_player(entity, player, token) do
+  defp update_player(entity, player) do
     res =
       Query.select(
         {Components.EnergyStorage, Components.Hull, Components.Level,
          Ecspanse.Component.Children},
         for: [entity]
       )
-      |> Query.one(token)
+      |> Query.one()
 
     case res do
       {energy, hull, level, children} ->
@@ -149,21 +142,21 @@ defmodule ISTWeb.Components.Player do
             current_level_up_points: level.current_level_up_points,
             next_level_up_points: level.next_level_up_points
         }
-        |> add_energy_countdown(entity, token)
-        |> update_defenses(children, token)
+        |> add_energy_countdown(entity)
+        |> update_defenses(children)
 
       _ ->
         player
     end
   end
 
-  defp update_defenses(player, children, token) do
+  defp update_defenses(player, children) do
     Query.select(
       {Entity, opt: Components.Evasion, opt: Components.Shields, opt: Components.Drones},
       with: [Components.Defense],
       for: children
     )
-    |> Query.stream(token)
+    |> Query.stream()
     |> Enum.reduce(player, fn
       {_entity, %Components.Evasion{value: evasion}, _, _}, player ->
         %Player{player | current_evasion: evasion}
@@ -179,14 +172,14 @@ defmodule ISTWeb.Components.Player do
     end)
   end
 
-  defp build_player(entity, token) do
+  defp build_player(entity) do
     {player, energy, hull, level, children} =
       Query.select(
         {Components.BattleShip, Components.EnergyStorage, Components.Hull, Components.Level,
          Ecspanse.Component.Children},
         for: [entity]
       )
-      |> Query.one(token)
+      |> Query.one()
 
     children = children.entities
 
@@ -200,37 +193,37 @@ defmodule ISTWeb.Components.Player do
       current_level_up_points: level.current_level_up_points,
       next_level_up_points: level.next_level_up_points
     }
-    |> add_type(entity, token)
-    |> add_energy_countdown(entity, token)
-    |> add_evasion(children, token)
-    |> add_shields(children, token)
-    |> add_drones(children, token)
-    |> add_laser(children, token)
-    |> add_railgun(children, token)
-    |> add_missile(children, token)
+    |> add_type(entity)
+    |> add_energy_countdown(entity)
+    |> add_evasion(children)
+    |> add_shields(children)
+    |> add_drones(children)
+    |> add_laser(children)
+    |> add_railgun(children)
+    |> add_missile(children)
   end
 
-  defp add_type(player, entity, token) do
-    if Query.has_component?(entity, Components.Human, token) do
+  defp add_type(player, entity) do
+    if Query.has_component?(entity, Components.Human) do
       Map.put(player, :type, "human")
     else
       Map.put(player, :type, "bot")
     end
   end
 
-  def add_energy_countdown(player, entity, token) do
-    {:ok, energy_timer} = Query.fetch_component(entity, Components.EnergyTimer, token)
+  def add_energy_countdown(player, entity) do
+    {:ok, energy_timer} = Query.fetch_component(entity, Components.EnergyTimer)
     Map.put(player, :energy_countdown, energy_timer.time)
   end
 
-  defp add_evasion(player, children, token) do
+  defp add_evasion(player, children) do
     {evasion, cost} =
       Query.select(
         {Components.Evasion, Components.EnergyCost},
         with: [Components.Defense],
         for: children
       )
-      |> Query.one(token)
+      |> Query.one()
 
     Map.merge(player, %{
       current_evasion: evasion.value,
@@ -239,14 +232,14 @@ defmodule ISTWeb.Components.Player do
     })
   end
 
-  defp add_shields(player, children, token) do
+  defp add_shields(player, children) do
     {shields, cost} =
       Query.select(
         {Components.Shields, Components.EnergyCost},
         with: [Components.Defense],
         for: children
       )
-      |> Query.one(token)
+      |> Query.one()
 
     Map.merge(player, %{
       current_shields: shields.hp,
@@ -255,14 +248,14 @@ defmodule ISTWeb.Components.Player do
     })
   end
 
-  defp add_drones(player, children, token) do
+  defp add_drones(player, children) do
     {drones, cost} =
       Query.select(
         {Components.Drones, Components.EnergyCost},
         with: [Components.Defense],
         for: children
       )
-      |> Query.one(token)
+      |> Query.one()
 
     Map.merge(player, %{
       current_drones: drones.count,
@@ -273,7 +266,7 @@ defmodule ISTWeb.Components.Player do
     })
   end
 
-  defp add_laser(player, children, token) do
+  defp add_laser(player, children) do
     {damage, accuracy, efficiency, cost} =
       Query.select(
         {Components.Damage, Components.Accuracy, Components.ShieldsEfficiency,
@@ -281,7 +274,7 @@ defmodule ISTWeb.Components.Player do
         with: [Components.Weapon, Components.Laser],
         for: children
       )
-      |> Query.one(token)
+      |> Query.one()
 
     Map.merge(player, %{
       laser_damage: damage.value,
@@ -291,7 +284,7 @@ defmodule ISTWeb.Components.Player do
     })
   end
 
-  defp add_railgun(player, children, token) do
+  defp add_railgun(player, children) do
     {damage, accuracy, efficiency, cost} =
       Query.select(
         {Components.Damage, Components.Accuracy, Components.ShieldsEfficiency,
@@ -299,7 +292,7 @@ defmodule ISTWeb.Components.Player do
         with: [Components.Weapon, Components.Railgun],
         for: children
       )
-      |> Query.one(token)
+      |> Query.one()
 
     Map.merge(player, %{
       railgun_damage: damage.value,
@@ -309,7 +302,7 @@ defmodule ISTWeb.Components.Player do
     })
   end
 
-  defp add_missile(player, children, token) do
+  defp add_missile(player, children) do
     {damage, accuracy, efficiency, cost} =
       Query.select(
         {Components.Damage, Components.Accuracy, Components.ShieldsEfficiency,
@@ -317,7 +310,7 @@ defmodule ISTWeb.Components.Player do
         with: [Components.Weapon, Components.Missile],
         for: children
       )
-      |> Query.one(token)
+      |> Query.one()
 
     Map.merge(player, %{
       missile_damage: damage.value,

@@ -27,7 +27,7 @@ defmodule IST.Systems.LevelUp do
       events
       |> Stream.filter(fn
         %Ecspanse.Event.ComponentUpdated{
-          updated: %IST.Components.Level{
+          component: %IST.Components.Level{
             current_level_up_points: current_points,
             next_level_up_points: next_points
           }
@@ -39,23 +39,23 @@ defmodule IST.Systems.LevelUp do
           false
       end)
       |> Stream.map(fn event ->
-        Ecspanse.Query.get_component_entity(event.updated, frame.token)
+        Ecspanse.Query.get_component_entity(event.component)
       end)
       |> Enum.to_list()
 
     if Enum.any?(ship_entities) do
-      level_up(ship_entities, frame.token)
+      level_up(ship_entities)
     end
   end
 
   # re-fetching the Level component is case it was updated
-  defp level_up(ship_entities, token) do
+  defp level_up(ship_entities) do
     Query.select(
       {IST.Components.Level, IST.Components.Hull, IST.Components.EnergyStorage},
       with: [IST.Components.BattleShip],
       for: ship_entities
     )
-    |> Query.stream(token)
+    |> Query.stream()
     |> Stream.filter(fn {level, _hull, _energy} ->
       level.current_level_up_points >= level.next_level_up_points
     end)

@@ -10,12 +10,12 @@ defmodule IST.Systems.CheckPlayersConnected do
   def run(frame) do
     users = Phoenix.Presence.list(ISTWeb.Presence, "iveseenthings")
 
-    {:ok, world_state} = Ecspanse.Query.fetch_resource(Ecspanse.Resource.State, frame.token)
+    {:ok, game_state} = Ecspanse.Query.fetch_resource(Ecspanse.Resource.State)
 
     if users == %{} do
-      Ecspanse.Command.update_resource!(world_state, value: :pause)
+      Ecspanse.Command.update_resource!(game_state, value: :pause)
     else
-      Ecspanse.Command.update_resource!(world_state, value: :play)
+      Ecspanse.Command.update_resource!(game_state, value: :play)
     end
   end
 end

@@ -15,7 +15,7 @@ defmodule IST.Systems.AddPlayers do
     Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
   end
 
-  def do_run(events, frame) do
+  def do_run(events, _frame) do
     events
     |> Enum.filter(fn
       %AddPlayerEvent{} ->
@@ -31,7 +31,7 @@ defmodule IST.Systems.AddPlayers do
         Query.select({Ecspanse.Entity},
           with: [IST.Components.BattleShip]
         )
-        |> Query.stream(frame.token)
+        |> Query.stream()
         |> Enum.count()
 
       if current_player_count < target_player_count + 50 do

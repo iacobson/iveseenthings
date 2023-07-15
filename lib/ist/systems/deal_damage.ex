@@ -38,11 +38,11 @@ defmodule IST.Systems.DealDamage do
       end)
 
     if Enum.any?(events) do
-      deal_damage(events, frame.token)
+      deal_damage(events)
     end
   end
 
-  defp deal_damage(events, token) do
+  defp deal_damage(events) do
     target_entities = Enum.map(events, fn %{target_entity: entity} -> entity end)
 
     Query.select(
@@ -50,34 +50,34 @@ defmodule IST.Systems.DealDamage do
       with: [IST.Components.BattleShip],
       for: target_entities
     )
-    |> Query.stream(token)
+    |> Query.stream()
     |> Stream.map(fn {target_entity, hull, target_level, children} ->
       event = Enum.find(events, fn %{target_entity: entity} -> entity == target_entity end)
 
-      do_deal_damage(event, hull, target_level, children.entities, token)
+      do_deal_damage(event, hull, target_level, children.entities)
     end)
     |> Enum.to_list()
     |> List.flatten()
     |> Ecspanse.Command.update_components!()
   end
 
-  defp do_deal_damage(event, hull, target_level, children_entities, token) do
+  defp do_deal_damage(event, hull, target_level, children_entities) do
     evasion_entity =
       Enum.find(children_entities, fn entity ->
-        Query.has_component?(entity, IST.Components.Evasion, token)
+        Query.has_component?(entity, IST.Components.Evasion)
       end)
 
-    {:ok, evasion} = Query.fetch_component(evasion_entity, IST.Components.Evasion, token)
+    {:ok, evasion} = Query.fetch_component(evasion_entity, IST.Components.Evasion)
 
     drone_entity =
       Enum.find(children_entities, fn entity ->
-        Query.has_component?(entity, IST.Components.Drones, token)
+        Query.has_component?(entity, IST.Components.Drones)
       end)
 
-    {:ok, drones} = Query.fetch_component(drone_entity, IST.Components.Drones, token)
+    {:ok, drones} = Query.fetch_component(drone_entity, IST.Components.Drones)
 
     {:ok, battle_logger_resource} =
-      Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger, token)
+      Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger)
 
     battle_logger_table = battle_logger_resource.ecs_table
 
@@ -85,10 +85,10 @@ defmodule IST.Systems.DealDamage do
          pass_the_drones?(drones, event, battle_logger_table) do
       shields_entity =
         Enum.find(children_entities, fn entity ->
-          Query.has_component?(entity, IST.Components.Shields, token)
+          Query.has_component?(entity, IST.Components.Shields)
         end)
 
-      {:ok, shields} = Query.fetch_component(shields_entity, IST.Components.Shields, token)
+      {:ok, shields} = Query.fetch_component(shields_entity, IST.Components.Shields)
       {new_shields_hp, hull_damage} = deal_shield_damage(shields, event)
 
       shields_damage = shields.hp - new_shields_hp
@@ -109,7 +109,7 @@ defmodule IST.Systems.DealDamage do
 
       modifier = target_level.value
       add_points = min(hull.hp, hull_damage) * modifier
-      update_points = add_hunter_points(event, add_points, token)
+      update_points = add_hunter_points(event, add_points)
 
       update_drones = destroy_a_drone(hull_damage, drones)
 
@@ -200,8 +200,8 @@ defmodule IST.Systems.DealDamage do
     end
   end
 
-  defp add_hunter_points(event, points, token) do
-    {:ok, hunter_level} = Query.fetch_component(event.hunter_entity, IST.Components.Level, token)
+  defp add_hunter_points(event, points) do
+    {:ok, hunter_level} = Query.fetch_component(event.hunter_entity, IST.Components.Level)
 
     {hunter_level,
      points: hunter_level.points + points,

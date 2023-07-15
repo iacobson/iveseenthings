@@ -9,7 +9,6 @@ defmodule ISTWeb.Components.BattleLog do
 
   prop tick, :string, from_context: :tick
   prop state, :string, from_context: :state
-  prop token, :string, from_context: :token
 
   prop player, :string, default: nil
   prop target, :string, default: nil
@@ -31,7 +30,7 @@ defmodule ISTWeb.Components.BattleLog do
     target = socket.assigns.target
 
     {:ok, battle_logger_resource} =
-      Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger, socket.assigns.token)
+      Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger)
 
     table = battle_logger_resource.ecs_table
 

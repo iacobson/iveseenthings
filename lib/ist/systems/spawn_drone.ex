@@ -30,28 +30,27 @@ defmodule IST.Systems.SpawnDrone do
       end)
 
     if Enum.any?(entities) do
-      spawn_drone(entities, frame.token)
+      spawn_drone(entities)
     end
   end
 
-  defp spawn_drone(entities, token) do
+  defp spawn_drone(entities) do
     Query.select({IST.Components.EnergyStorage, Ecspanse.Component.Children},
       with: [IST.Components.BattleShip],
       for: entities
     )
-    |> Query.stream(token)
+    |> Query.stream()
     |> Stream.map(fn {energy, children} ->
       drones_entity =
         children.entities
         |> Enum.find(fn entity ->
-          Ecspanse.Query.has_component?(entity, IST.Components.Drones, token)
+          Ecspanse.Query.has_component?(entity, IST.Components.Drones)
         end)
 
       {:ok, {drones_component, energy_cost_component}} =
         Ecspanse.Query.fetch_components(
           drones_entity,
-          {IST.Components.Drones, IST.Components.EnergyCost},
-          token
+          {IST.Components.Drones, IST.Components.EnergyCost}
         )
 
       %{

@@ -14,7 +14,6 @@ defmodule ISTWeb.Components.PlayerList do
 
   prop tick, :string, from_context: :tick
   prop state, :string, from_context: :state
-  prop token, :string, from_context: :token
 
   prop current_player, :string, default: nil
   prop select_player_event, :event
@@ -36,24 +35,24 @@ defmodule ISTWeb.Components.PlayerList do
   defp fetch_players(socket) do
     case socket.assigns do
       %{state: :observer} ->
-        players = get_all_players(socket.assigns.token)
+        players = get_all_players()
         assign(socket, players: players)
 
       %{state: :play} ->
         players =
-          get_all_players(socket.assigns.token)
+          get_all_players()
           |> Enum.reject(&(&1.id == socket.assigns.current_player))
 
         assign(socket, players: players)
     end
   end
 
-  defp get_all_players(token) do
+  defp get_all_players() do
     Query.select(
       {Entity, Components.BattleShip, Components.Level,
        opt: Components.Human, opt: Components.Bot}
     )
-    |> Query.stream(token)
+    |> Query.stream()
     |> Stream.map(fn
       {entity, battle_ship, level, human, bot} ->
         player_type =
@@ -75,7 +74,7 @@ defmodule ISTWeb.Components.PlayerList do
 
   defp update_fps(socket) do
     {:ok, fps_resource} =
-      Ecspanse.Query.fetch_resource(Ecspanse.Resource.FPS, socket.assigns.token)
+      Ecspanse.Query.fetch_resource(Ecspanse.Resource.FPS)
 
     assign(socket, fps: fps_resource.value)
   end

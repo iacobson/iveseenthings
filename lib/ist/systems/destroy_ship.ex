@@ -15,11 +15,11 @@ defmodule IST.Systems.DestroyShip do
     ship_entities =
       events
       |> Stream.filter(fn
-        %Ecspanse.Event.ComponentUpdated{updated: %IST.Components.Hull{hp: 0}} -> true
+        %Ecspanse.Event.ComponentUpdated{component: %IST.Components.Hull{hp: 0}} -> true
         _ -> false
       end)
       |> Stream.map(fn event ->
-        Ecspanse.Query.get_component_entity(event.updated, frame.token)
+        Ecspanse.Query.get_component_entity(event.component)
       end)
       |> Enum.to_list()
 

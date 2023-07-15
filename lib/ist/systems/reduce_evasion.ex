@@ -11,7 +11,7 @@ defmodule IST.Systems.ReduceEvasion do
     Query.select({IST.Components.Evasion, IST.Components.EvasionTimer},
       with: [IST.Components.Defense]
     )
-    |> Query.stream(frame.token)
+    |> Query.stream()
     |> Stream.map(fn {evasion, evasion_timer} ->
       new_value = ceil(evasion_timer.time / 1000)
 

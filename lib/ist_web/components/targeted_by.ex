@@ -11,7 +11,6 @@ defmodule ISTWeb.Components.TargetedBy do
 
   prop tick, :string, from_context: :tick
   prop state, :string, from_context: :state
-  prop token, :string, from_context: :token
 
   prop player, :string, default: nil
   prop select_player_event, :event
@@ -32,12 +31,12 @@ defmodule ISTWeb.Components.TargetedBy do
     entity = Ecspanse.Entity.build(socket.assigns.player)
 
     targeting_ship_entities =
-      Query.list_parents(entity, socket.assigns.token)
+      Query.list_parents(entity)
       |> Stream.filter(fn entity ->
-        Query.is_type?(entity, Components.Target, socket.assigns.token)
+        Query.is_type?(entity, Components.Target)
       end)
       |> Stream.map(fn entity ->
-        Query.list_parents(entity, socket.assigns.token)
+        Query.list_parents(entity)
       end)
       |> Enum.concat()
 
@@ -54,7 +53,7 @@ defmodule ISTWeb.Components.TargetedBy do
         {Entity, Components.BattleShip, opt: Components.Human, opt: Components.Bot},
         for: targeting_ship_entities
       )
-      |> Query.stream(socket.assigns.token)
+      |> Query.stream()
       |> Stream.map(fn
         {entity, battle_ship, human, bot} ->
           player_type =

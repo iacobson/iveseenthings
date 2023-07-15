@@ -16,7 +16,7 @@ defmodule IST.Systems.BotAction do
 
     bot_entities =
       Query.select({Ecspanse.Entity}, with: [IST.Components.Bot])
-      |> Query.stream(frame.token)
+      |> Query.stream()
       |> Stream.map(fn {entity} -> entity end)
       |> Enum.to_list()
 
@@ -54,84 +54,77 @@ defmodule IST.Systems.BotAction do
            fire_missile: 50
          ) do
       :target ->
-        acquire_target_lock(entity, frame, enemy_entities)
+        acquire_target_lock(entity, enemy_entities)
 
       :evasive_maneuvers ->
-        perform_evasive_maneuvers(entity, frame)
+        perform_evasive_maneuvers(entity)
 
       :boost_shields ->
-        boost_shields(entity, frame)
+        boost_shields(entity)
 
       :spawn_drone ->
-        spawn_drone(entity, frame)
+        spawn_drone(entity)
 
       :fire_laser ->
-        fire_laser(entity, frame)
+        fire_laser(entity)
 
       :fire_railgun ->
-        fire_railgun(entity, frame)
+        fire_railgun(entity)
 
       :fire_missile ->
-        fire_missile(entity, frame)
+        fire_missile(entity)
     end
   end
 
-  defp acquire_target_lock(entity, frame, target_entities) do
+  defp acquire_target_lock(entity, target_entities) do
     if Enum.any?(target_entities) do
       random_target = Enum.random(target_entities)
 
       Ecspanse.event(
         {IST.Events.AcquireTargetLock, hunter_id: entity.id, target_id: random_target.id},
-        frame.token,
         batch_key: random_target.id
       )
     end
   end
 
-  defp perform_evasive_maneuvers(entity, frame) do
+  defp perform_evasive_maneuvers(entity) do
     Ecspanse.event(
       {IST.Events.PerformEvasiveManeuvers, ship_id: entity.id},
-      frame.token,
       batch_key: entity.id
     )
   end
 
-  defp boost_shields(entity, frame) do
+  defp boost_shields(entity) do
     Ecspanse.event(
       {IST.Events.BoostShields, ship_id: entity.id},
-      frame.token,
       batch_key: entity.id
     )
   end
 
-  defp spawn_drone(entity, frame) do
+  defp spawn_drone(entity) do
     Ecspanse.event(
       {IST.Events.SpawnDrone, ship_id: entity.id},
-      frame.token,
       batch_key: entity.id
     )
   end
 
-  defp fire_laser(entity, frame) do
+  defp fire_laser(entity) do
     Ecspanse.event(
       {IST.Events.FireWeapon, ship_id: entity.id, weapon: :laser},
-      frame.token,
       batch_key: entity.id
     )
   end
 
-  defp fire_railgun(entity, frame) do
+  defp fire_railgun(entity) do
     Ecspanse.event(
       {IST.Events.FireWeapon, ship_id: entity.id, weapon: :railgun},
-      frame.token,
       batch_key: entity.id
     )
   end
 
-  defp fire_missile(entity, frame) do
+  defp fire_missile(entity) do
     Ecspanse.event(
       {IST.Events.FireWeapon, ship_id: entity.id, weapon: :missile},
-      frame.token,
       batch_key: entity.id
     )
   end

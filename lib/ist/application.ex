@@ -18,8 +18,7 @@ defmodule IST.Application do
       ISTWeb.Endpoint,
       # Start a worker by calling: IST.Worker.start_link(arg)
       # {IST.Worker, arg}
-      IST.DynamicSupervisor,
-      IST
+      IST.Game
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

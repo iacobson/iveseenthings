@@ -17,7 +17,7 @@ defmodule IST.Systems.CheckTargetAlive do
     Query.select({Ecspanse.Entity, Ecspanse.Component.Children, Ecspanse.Component.Parents},
       with: [IST.Components.Target]
     )
-    |> Query.stream(frame.token)
+    |> Query.stream()
     |> Stream.filter(fn {_entity, children, parents} ->
       Enum.empty?(children.entities) || Enum.empty?(parents.entities)
     end)

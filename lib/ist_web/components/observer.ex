@@ -56,7 +56,7 @@ defmodule ISTWeb.Components.Observer do
                Query.list_children(entity),
              %Ecspanse.Entity{} = target_entity <-
                Enum.find(children, fn child ->
-                 Query.is_type?(child, IST.Components.Target)
+                 Query.has_component?(child, IST.Components.Target)
                end),
              # Alaways need to check if the target is still alive
              [target_ship_entity] <- Query.list_children(target_entity) do

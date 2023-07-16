@@ -33,7 +33,7 @@ defmodule ISTWeb.Components.TargetedBy do
     targeting_ship_entities =
       Query.list_parents(entity)
       |> Stream.filter(fn entity ->
-        Query.is_type?(entity, Components.Target)
+        Query.has_component?(entity, Components.Target)
       end)
       |> Stream.map(fn entity ->
         Query.list_parents(entity)

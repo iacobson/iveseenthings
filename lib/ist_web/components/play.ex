@@ -76,7 +76,7 @@ defmodule ISTWeb.Components.Play do
   defp check_player_alive(socket) do
     entity = Ecspanse.Entity.build(socket.assigns.user_id)
 
-    if Ecspanse.Query.is_type?(entity, IST.Components.Human) do
+    if Ecspanse.Query.has_component?(entity, IST.Components.Human) do
       assign(socket, player_dead: false, current_player: socket.assigns.user_id)
     else
       send(self(), {:change_state, :game_over})
@@ -100,7 +100,7 @@ defmodule ISTWeb.Components.Play do
                Query.list_children(entity),
              %Ecspanse.Entity{} = target_entity <-
                Enum.find(children, fn child ->
-                 Query.is_type?(child, IST.Components.Target)
+                 Query.has_component?(child, IST.Components.Target)
                end),
              # Alaways need to check if the target is still alive
              [target_ship_entity] <- Query.list_children(target_entity) do

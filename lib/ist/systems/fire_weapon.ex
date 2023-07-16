@@ -64,7 +64,7 @@ defmodule IST.Systems.FireWeapon do
       weapon_entity =
         children.entities
         |> Enum.find(fn entity ->
-          Ecspanse.Query.is_type?(entity, weapon_module)
+          Ecspanse.Query.has_component?(entity, weapon_module)
         end)
 
       {:ok, {energy_cost}} =
@@ -76,7 +76,7 @@ defmodule IST.Systems.FireWeapon do
       target_entity =
         children.entities
         |> Enum.find(fn entity ->
-          Query.is_type?(entity, IST.Components.Target)
+          Query.has_component?(entity, IST.Components.Target)
         end)
 
       %{

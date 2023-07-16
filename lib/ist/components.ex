@@ -7,17 +7,17 @@ defmodule IST.Components do
 
   defmodule BattleShip do
     @moduledoc "BattleShip identifier"
-    use Ecspanse.Component, state: [name: nil], access_mode: :readonly
+    use Ecspanse.Component, state: [name: nil]
   end
 
   defmodule Bot do
     @moduledoc "BattleShip is a bot"
-    use Ecspanse.Component, access_mode: :entity_type
+    use Ecspanse.Component
   end
 
   defmodule Human do
     @moduledoc "BattleShip is a human"
-    use Ecspanse.Component, access_mode: :entity_type
+    use Ecspanse.Component
   end
 
   defmodule Hull do
@@ -82,7 +82,7 @@ defmodule IST.Components do
 
     """
 
-    use Ecspanse.Component, access_mode: :entity_type
+    use Ecspanse.Component
   end
 
   defmodule Level do
@@ -121,7 +121,7 @@ defmodule IST.Components do
 
   defmodule Defense do
     @moduledoc "Defense identifier"
-    use Ecspanse.Component, access_mode: :readonly
+    use Ecspanse.Component
   end
 
   defmodule Evasion do
@@ -210,22 +210,22 @@ defmodule IST.Components do
 
   defmodule Weapon do
     @moduledoc "Weapon identifier"
-    use Ecspanse.Component, access_mode: :readonly
+    use Ecspanse.Component
   end
 
   defmodule Laser do
     @moduledoc "Laser weapon"
-    use Ecspanse.Component, access_mode: :entity_type
+    use Ecspanse.Component
   end
 
   defmodule Railgun do
     @moduledoc "Railgun weapon"
-    use Ecspanse.Component, access_mode: :entity_type
+    use Ecspanse.Component
   end
 
   defmodule Missile do
     @moduledoc "Missile weapon"
-    use Ecspanse.Component, access_mode: :entity_type
+    use Ecspanse.Component
   end
 
   defmodule Damage do

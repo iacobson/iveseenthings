@@ -15,10 +15,10 @@ defmodule IST.Systems.EvasiveManeuvers do
 
   @impl true
   def run(frame) do
-    Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
+    Enum.each(frame.event_batches, fn events -> do_run(events) end)
   end
 
-  defp do_run(events, frame) do
+  defp do_run(events) do
     entities =
       events
       |> Stream.filter(fn

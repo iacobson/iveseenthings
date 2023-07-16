@@ -7,7 +7,7 @@ defmodule IST.Systems.ReduceEvasion do
   alias Ecspanse.Query
 
   @impl true
-  def run(frame) do
+  def run(_frame) do
     Query.select({IST.Components.Evasion, IST.Components.EvasionTimer},
       with: [IST.Components.Defense]
     )

@@ -13,7 +13,7 @@ defmodule IST.Systems.CheckTargetAlive do
   alias Ecspanse.Query
 
   @impl true
-  def run(frame) do
+  def run(_frame) do
     Query.select({Ecspanse.Entity, Ecspanse.Component.Children, Ecspanse.Component.Parents},
       with: [IST.Components.Target]
     )

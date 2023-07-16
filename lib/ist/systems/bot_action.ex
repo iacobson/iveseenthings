@@ -10,8 +10,8 @@ defmodule IST.Systems.BotAction do
   alias Ecspanse.Query
 
   @impl true
-  def run(frame) do
-    # THIS WILL NEED TO EVOLVE wiith the game implementation
+  def run(_frame) do
+    # THIS WILL NEED TO EVOLVE with the game implementation
     # for now, just random decisions
 
     bot_entities =
@@ -23,7 +23,7 @@ defmodule IST.Systems.BotAction do
     Ecspanse.System.execute_async(
       bot_entities,
       fn bot_entity ->
-        decide(bot_entity, frame, bot_entities -- [bot_entity])
+        decide(bot_entity, bot_entities -- [bot_entity])
       end,
       concurrent: System.schedulers_online() * 4
     )
@@ -33,17 +33,17 @@ defmodule IST.Systems.BotAction do
     # Anithing needed should be queried before and passed as argument to the `decide` function
   end
 
-  defp decide(entity, frame, enemy_entities) do
+  defp decide(entity, enemy_entities) do
     case IST.Util.odds(action: 1, wait: 120) do
       :wait ->
         :ok
 
       :action ->
-        action(entity, frame, enemy_entities)
+        action(entity, enemy_entities)
     end
   end
 
-  defp action(entity, frame, enemy_entities) do
+  defp action(entity, enemy_entities) do
     case IST.Util.odds(
            target: 150,
            evasive_maneuvers: 100,

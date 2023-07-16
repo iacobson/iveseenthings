@@ -8,7 +8,7 @@ defmodule IST.Systems.AddEnergy do
     events_subscription: [IST.Events.EnergyTimerComplete]
 
   @impl true
-  def run(%IST.Events.EnergyTimerComplete{entity_id: entity_id}, frame) do
+  def run(%IST.Events.EnergyTimerComplete{entity_id: entity_id}, _frame) do
     # Making sure the entity is still alive
     with {:ok, entity} <- Ecspanse.Query.fetch_entity(entity_id) do
       {:ok, energy_storage_component} =

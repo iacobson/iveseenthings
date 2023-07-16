@@ -7,7 +7,7 @@ defmodule IST.Systems.CleanLogger do
   require Ex2ms
 
   @impl true
-  def run(frame) do
+  def run(_frame) do
     {:ok, battle_logger_resource} =
       Ecspanse.Query.fetch_resource(IST.Resources.BattleLogger)
 

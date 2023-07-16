@@ -7,7 +7,7 @@ defmodule IST.Systems.CheckPlayersConnected do
   use Ecspanse.System
 
   @impl true
-  def run(frame) do
+  def run(_frame) do
     users = Phoenix.Presence.list(ISTWeb.Presence, "iveseenthings")
 
     {:ok, game_state} = Ecspanse.Query.fetch_resource(Ecspanse.Resource.State)

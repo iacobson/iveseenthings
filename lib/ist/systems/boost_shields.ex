@@ -12,7 +12,7 @@ defmodule IST.Systems.BoostShields do
     events_subscription: [IST.Events.BoostShields]
 
   @impl true
-  def run(event, frame) do
+  def run(event, _frame) do
     with {:ok, entity} <- Ecspanse.Query.fetch_entity(event.ship_id) do
       {:ok, energy_component} =
         Ecspanse.Query.fetch_component(entity, IST.Components.EnergyStorage)

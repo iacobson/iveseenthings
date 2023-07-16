@@ -19,7 +19,7 @@ defmodule IST.Systems.TargetLock do
     Enum.each(frame.event_batches, fn events -> do_run(events, frame) end)
   end
 
-  defp do_run(events, frame) do
+  defp do_run(events, _frame) do
     hunter_target_entities =
       events
       |> Stream.filter(fn

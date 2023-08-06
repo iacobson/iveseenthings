@@ -6,6 +6,7 @@ defmodule IST.Game do
   use Ecspanse,
     fps_limit: Application.compile_env(:iveseenthings, :fps_limit)
 
+  @impl Ecspanse
   def setup(data) do
     data
     |> Ecspanse.add_system_set({__MODULE__, :startup_systems})

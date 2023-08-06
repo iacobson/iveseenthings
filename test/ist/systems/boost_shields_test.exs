@@ -15,7 +15,7 @@ defmodule IST.Systems.BoostShieldsTest do
   end
 
   setup do
-    start_supervised({TestServer, :test})
+    {:ok, _pid} = start_supervised({TestServer, :test})
     player_id = UUID.uuid4()
 
     Ecspanse.System.debug()

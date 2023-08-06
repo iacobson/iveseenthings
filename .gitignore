@@ -40,6 +40,7 @@ assets/css/_components.css
 
 # Elixir Language Server
 /.elixir_ls
+/.elixir-tools
 
 # Secrets
 /config/*.secret.exs

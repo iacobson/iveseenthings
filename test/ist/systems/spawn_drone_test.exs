@@ -8,7 +8,7 @@ defmodule IST.Systems.SpawnDroneTest do
 
   setup do
     # This is the real game world.
-    start_supervised({IST.Game, :test})
+    {:ok, _pid} = start_supervised({IST.Game, :test})
 
     player_id = UUID.uuid4()
     ISTWeb.Presence.track(self(), "iveseenthings", player_id, %{})

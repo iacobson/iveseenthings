@@ -24,7 +24,7 @@ defmodule IST.Systems.DestroyShip do
       |> Enum.to_list()
 
     if Enum.any?(ship_entities) do
-      Ecspanse.Command.despawn_entities_and_children!(ship_entities)
+      Ecspanse.Command.despawn_entities_and_descendants!(ship_entities)
     end
   end
 end

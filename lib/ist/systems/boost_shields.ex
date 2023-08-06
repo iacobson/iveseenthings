@@ -5,11 +5,8 @@ defmodule IST.Systems.BoostShields do
   """
 
   use Ecspanse.System,
-    lock_components: [
-      IST.Components.EnergyStorage,
-      IST.Components.Shields
-    ],
-    events_subscription: [IST.Events.BoostShields]
+    lock_components: [IST.Components.EnergyStorage, IST.Components.Shields],
+    event_subscriptions: [IST.Events.BoostShields]
 
   @impl true
   def run(event, _frame) do

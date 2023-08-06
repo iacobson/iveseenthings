@@ -6,11 +6,12 @@ defmodule IST.Util do
   @doc """
   Retruns a key from a keyword list of odds.
   ## Example
-    IST.UTIL.odds([stay: 50, go: 50])
+    IST.Util.odds([stay: 50, go: 50])
     :stay
   """
   @spec odds(keyword()) :: atom()
   def odds(odds) do
+    odds = Enum.shuffle(odds)
     max_value = Keyword.values(odds) |> Enum.sum()
     random = :rand.uniform(max_value)
     return_key(odds, 0, random)

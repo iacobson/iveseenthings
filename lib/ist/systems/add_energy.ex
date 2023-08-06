@@ -1,11 +1,11 @@
 defmodule IST.Systems.AddEnergy do
   @moduledoc """
-  When the counter reaches zero, add energy to the ship and resets back the counter.
+  When the counter reaches zero, add energy to the ship.
   """
 
   use Ecspanse.System,
     lock_components: [IST.Components.EnergyStorage],
-    events_subscription: [IST.Events.EnergyTimerComplete]
+    event_subscriptions: [IST.Events.EnergyTimerComplete]
 
   @impl true
   def run(%IST.Events.EnergyTimerComplete{entity_id: entity_id}, _frame) do

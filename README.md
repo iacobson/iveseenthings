@@ -1,8 +1,8 @@
 # I've Seen Things (IST)
 
-> title attribution: <https://en.wikipedia.org/wiki/Tears_in_rain_monologue>
+> [title attribution](https://en.wikipedia.org/wiki/Tears_in_rain_monologue)
 
-I've seen things is a multiplayer browser game implemented in [Elixir](https://elixir-lang.org/), [Phoenix LiveView](https://www.phoenixframework.org/) and [Surface](https://surface-ui.org/getting_started) using the [Ecspanse](https://hexdocs.pm/ecspanse/Ecspanse.html) library. The terminal graphics are done with the [tuicss](https://github.com/vinibiavatti1/TuiCss/wiki/Getting-Started) package.
+**I've Seen Things** is a multiplayer browser game implemented in [Elixir](https://elixir-lang.org/), [Phoenix LiveView](https://www.phoenixframework.org/) and [Surface](https://surface-ui.org/getting_started) using the [Ecspanse](https://hexdocs.pm/ecspanse/Ecspanse.html) library. The terminal graphics are done with the [tuicss](https://github.com/vinibiavatti1/TuiCss/wiki/Getting-Started) package.
 
 The game is currenly deployed on [fly.io](https://fly.io) and can be played [HERE](https://iveseenthings.fly.dev/).
 

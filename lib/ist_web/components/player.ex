@@ -106,18 +106,22 @@ defmodule ISTWeb.Components.Player do
   end
 
   defp fetch_player(socket) do
-    entity = Entity.build(socket.assigns.selected)
+    case Entity.fetch(socket.assigns.selected) do
+      {:ok, entity} ->
+        player =
+          if socket.assigns.selected && socket.assigns.player.id == socket.assigns.selected do
+            # update just the dynamic values
+            update_player(entity, socket.assigns.player)
+          else
+            # build the full player structure only when changing the selected player
+            build_player(entity)
+          end
 
-    player =
-      if socket.assigns.selected && socket.assigns.player.id == socket.assigns.selected do
-        # update just the dynamic values
-        update_player(entity, socket.assigns.player)
-      else
-        # build the full player structure only when changing the selected player
-        build_player(entity)
-      end
+        assign(socket, player: player)
 
-    assign(socket, player: player)
+      _ ->
+        socket
+    end
   end
 
   defp update_player(entity, player) do

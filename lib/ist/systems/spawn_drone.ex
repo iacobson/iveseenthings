@@ -25,9 +25,13 @@ defmodule IST.Systems.SpawnDrone do
         %DroneEvent{} -> true
         _ -> false
       end)
-      |> Enum.map(fn %DroneEvent{ship_id: id} ->
-        Ecspanse.Entity.build(id)
+      |> Stream.map(fn %DroneEvent{ship_id: id} ->
+        case Ecspanse.Entity.fetch(id) do
+          {:ok, entity} -> entity
+          _ -> nil
+        end
       end)
+      |> Enum.reject(&is_nil/1)
 
     if Enum.any?(entities) do
       spawn_drone(entities)

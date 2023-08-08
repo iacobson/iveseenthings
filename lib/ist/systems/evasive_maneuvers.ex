@@ -25,9 +25,14 @@ defmodule IST.Systems.EvasiveManeuvers do
         %PerformEvasiveManeuvers{} -> true
         _ -> false
       end)
-      |> Enum.map(fn %PerformEvasiveManeuvers{ship_id: id} ->
-        Ecspanse.Entity.build(id)
+      |> Stream.map(fn %PerformEvasiveManeuvers{ship_id: id} ->
+        with {:ok, entity} <- Ecspanse.Entity.fetch(id) do
+          entity
+        else
+          _ -> nil
+        end
       end)
+      |> Enum.reject(&is_nil/1)
 
     if Enum.any?(entities) do
       perform_evasive_maneuvers(entities)

@@ -28,22 +28,25 @@ defmodule ISTWeb.Components.TargetedBy do
   end
 
   defp fetch_targeting_enemies(socket) do
-    entity = Ecspanse.Entity.build(socket.assigns.player)
-
-    targeting_ship_entities =
-      Query.list_parents(entity)
-      |> Stream.filter(fn entity ->
-        Query.has_component?(entity, Components.Target)
-      end)
-      |> Stream.map(fn entity ->
+    with {:ok, entity} <- Entity.fetch(socket.assigns.player) do
+      targeting_ship_entities =
         Query.list_parents(entity)
-      end)
-      |> Enum.concat()
+        |> Stream.filter(fn entity ->
+          Query.has_component?(entity, Components.Target)
+        end)
+        |> Stream.map(fn entity ->
+          Query.list_parents(entity)
+        end)
+        |> Enum.concat()
 
-    if Enum.any?(targeting_ship_entities) do
-      assign_targeting_enemies(socket, targeting_ship_entities)
+      if Enum.any?(targeting_ship_entities) do
+        assign_targeting_enemies(socket, targeting_ship_entities)
+      else
+        assign(socket, targeting_enemies: [])
+      end
     else
-      assign(socket, targeting_enemies: [])
+      _ ->
+        assign(socket, targeting_enemies: [])
     end
   end
 

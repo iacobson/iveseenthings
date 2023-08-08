@@ -26,27 +26,23 @@ defmodule ISTWeb.Components.TargetLock do
   end
 
   defp fetch_enemy(socket) do
-    entity = Entity.build(socket.assigns.targeted)
+    with {:ok, entity} <- Entity.fetch(socket.assigns.targeted),
+         {enemy_ship, energy, level} <-
+           Query.select({Components.BattleShip, Components.EnergyStorage, Components.Level},
+             for: [entity]
+           )
+           |> Query.one() do
+      enemy =
+        %{
+          id: entity.id,
+          name: String.slice(enemy_ship.name, 0, 13),
+          energy: energy.value,
+          level: level.value
+        }
+        |> add_type(entity)
 
-    res =
-      Query.select({Components.BattleShip, Components.EnergyStorage, Components.Level},
-        for: [entity]
-      )
-      |> Query.one()
-
-    case res do
-      {enemy_ship, energy, level} ->
-        enemy =
-          %{
-            id: entity.id,
-            name: String.slice(enemy_ship.name, 0, 13),
-            energy: energy.value,
-            level: level.value
-          }
-          |> add_type(entity)
-
-        assign(socket, enemy: enemy)
-
+      assign(socket, enemy: enemy)
+    else
       _ ->
         socket
     end

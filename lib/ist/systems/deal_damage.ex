@@ -32,10 +32,16 @@ defmodule IST.Systems.DealDamage do
         _ -> false
       end)
       |> Enum.map(fn %DamageEvent{target_id: target_id, hunter_id: hunter_id} = event ->
-        Map.from_struct(event)
-        |> Map.put(:target_entity, Ecspanse.Entity.build(target_id))
-        |> Map.put(:hunter_entity, Ecspanse.Entity.build(hunter_id))
+        with {:ok, target_entity} <- Query.fetch_entity(target_id),
+             {:ok, hunter_entity} <- Query.fetch_entity(hunter_id) do
+          Map.from_struct(event)
+          |> Map.put(:target_entity, target_entity)
+          |> Map.put(:hunter_entity, hunter_entity)
+        else
+          _ -> nil
+        end
       end)
+      |> Enum.reject(&is_nil/1)
 
     if Enum.any?(events) do
       deal_damage(events)

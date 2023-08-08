@@ -17,7 +17,8 @@ defmodule IST.Systems.SpawnDroneTest do
 
     {:ok, _pid} = start_supervised(IST.Debug)
 
-    player_entity = Ecspanse.Entity.build(player_id)
+    :timer.sleep(100)
+    {:ok, player_entity} = Ecspanse.Entity.fetch(player_id)
 
     {:ok, player_entity: player_entity}
   end

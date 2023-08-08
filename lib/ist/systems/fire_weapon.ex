@@ -31,9 +31,14 @@ defmodule IST.Systems.FireWeapon do
         %FireEvent{} -> true
         _ -> false
       end)
-      |> Enum.map(fn %FireEvent{ship_id: id, weapon: weapon} ->
-        %{entity: Ecspanse.Entity.build(id), weapon: weapon}
+      |> Stream.map(fn %FireEvent{ship_id: id, weapon: weapon} ->
+        with {:ok, entity} <- Ecspanse.Entity.fetch(id) do
+          %{entity: entity, weapon: weapon}
+        else
+          _ -> nil
+        end
       end)
+      |> Enum.reject(&is_nil/1)
 
     if Enum.any?(events) do
       fire_weapon(events)

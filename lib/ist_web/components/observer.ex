@@ -34,13 +34,13 @@ defmodule ISTWeb.Components.Observer do
   end
 
   def handle_event("select_player", %{"player_id" => id}, socket) do
-    entity = Ecspanse.Entity.build(id)
-
-    if Query.has_component?(entity, IST.Components.BattleShip) do
+    with {:ok, entity} <- Ecspanse.Entity.fetch(id),
+         true <- Query.has_component?(entity, IST.Components.BattleShip) do
       socket = assign(socket, selected_player: id)
       {:noreply, socket}
     else
-      {:noreply, socket}
+      _ ->
+        {:noreply, socket}
     end
   end
 
@@ -50,9 +50,8 @@ defmodule ISTWeb.Components.Observer do
         assign(socket, target_player: nil)
 
       player_id ->
-        entity = Ecspanse.Entity.build(player_id)
-
-        with children when is_list(children) and length(children) > 0 <-
+        with {:ok, entity} <- Ecspanse.Entity.fetch(player_id),
+             children when is_list(children) and length(children) > 0 <-
                Query.list_children(entity),
              %Ecspanse.Entity{} = target_entity <-
                Enum.find(children, fn child ->

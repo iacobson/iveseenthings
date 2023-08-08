@@ -27,17 +27,14 @@ defmodule IST.Systems.TargetLock do
         _ -> false
       end)
       |> Stream.map(fn event ->
-        %{
-          hunter: Ecspanse.Entity.build(event.hunter_id),
-          target: Ecspanse.Entity.build(event.target_id)
-        }
+        with {:ok, hunter} <- Ecspanse.Entity.fetch(event.hunter_id),
+             {:ok, target} <- Ecspanse.Entity.fetch(event.target_id) do
+          %{hunter: hunter, target: target}
+        else
+          _ -> nil
+        end
       end)
-      |> Stream.filter(fn %{hunter: hunter, target: target} ->
-        # Validate if the hunter and target exist
-        Query.has_component?(hunter, IST.Components.BattleShip) &&
-          Query.has_component?(target, IST.Components.BattleShip)
-      end)
-      |> Enum.to_list()
+      |> Enum.reject(&is_nil/1)
 
     # remove existing targets
     hunter_entities = Enum.map(hunter_target_entities, fn %{hunter: hunter} -> hunter end)

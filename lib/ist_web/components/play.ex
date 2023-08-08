@@ -53,18 +53,13 @@ defmodule ISTWeb.Components.Play do
     Ecspanse.event(
       {IST.Events.AcquireTargetLock,
        hunter_id: socket.assigns.current_player, target_id: target_id},
-      batch_key: target_id,
-      for_entity_ids: [
-        Ecspanse.Entity.build(socket.assigns.current_player),
-        Ecspanse.Entity.build(target_id)
-      ]
+      batch_key: target_id
     )
 
     {:noreply, socket}
   end
 
   defp create_player(socket) do
-    # for_entity_ids list not needed because the player is created
     Ecspanse.event(
       {IST.Events.AddPlayer, player_id: socket.assigns.user_id},
       batch_key: socket.assigns.user_id
@@ -74,13 +69,13 @@ defmodule ISTWeb.Components.Play do
   end
 
   defp check_player_alive(socket) do
-    entity = Ecspanse.Entity.build(socket.assigns.user_id)
-
-    if Ecspanse.Query.has_component?(entity, IST.Components.Human) do
+    with {:ok, entity} <- Ecspanse.Entity.fetch(socket.assigns.user_id),
+         true <- Ecspanse.Query.has_component?(entity, IST.Components.Human) do
       assign(socket, player_dead: false, current_player: socket.assigns.user_id)
     else
-      send(self(), {:change_state, :game_over})
-      assign(socket, player_dead: true, current_player: nil)
+      _ ->
+        send(self(), {:change_state, :game_over})
+        assign(socket, player_dead: true, current_player: nil)
     end
   end
 
@@ -94,9 +89,8 @@ defmodule ISTWeb.Components.Play do
         assign(socket, target_player: nil)
 
       player_id ->
-        entity = Ecspanse.Entity.build(player_id)
-
-        with children when is_list(children) and length(children) > 0 <-
+        with {:ok, entity} <- Ecspanse.Entity.fetch(player_id),
+             children when is_list(children) and length(children) > 0 <-
                Query.list_children(entity),
              %Ecspanse.Entity{} = target_entity <-
                Enum.find(children, fn child ->

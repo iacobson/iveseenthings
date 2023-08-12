@@ -52,7 +52,7 @@ defmodule IST.MixProject do
       # :eflambe.capture({Ecspanse.Query, :stream, 2}, 3, output_format: :brendan_gregg)
       {:flame_on, git: "https://github.com/DockYard/flame_on.git", branch: "main"},
       # ECSPANSE
-      {:ecspanse, git: "https://github.com/iacobson/ecspanse.git", branch: "main"}
+      {:ecspanse, "~> 0.1.0"}
     ]
   end
 

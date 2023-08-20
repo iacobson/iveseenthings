@@ -89,7 +89,7 @@ defmodule IST.Events do
     @moduledoc """
     The energy timer has reached zero.
     """
-    use Ecspanse.Event.Timer
+    use Ecspanse.Template.Event.Timer
   end
 
   defmodule EvasionTimerComplete do
@@ -97,6 +97,6 @@ defmodule IST.Events do
     Evasion reached zero.
     This is not really used.
     """
-    use Ecspanse.Event.Timer
+    use Ecspanse.Template.Event.Timer
   end
 end

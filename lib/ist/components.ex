@@ -278,8 +278,13 @@ defmodule IST.Components do
 
   defmodule EnergyTimer do
     @moduledoc "Energy Timer component"
-    use Ecspanse.Component.Timer,
-      state: [duration: 3000, event: IST.Events.EnergyTimerComplete, mode: :repeat]
+    use Ecspanse.Template.Component.Timer,
+      state: [
+        duration: 3000,
+        time: 3000,
+        event: IST.Events.EnergyTimerComplete,
+        mode: :repeat
+      ]
   end
 
   defmodule EvasionTimer do
@@ -287,7 +292,12 @@ defmodule IST.Components do
     The eveasion timer keeps track of the actual evasion value.
     """
 
-    use Ecspanse.Component.Timer,
-      state: [duration: 30 * 1000, event: IST.Events.EvasionTimerComplete, mode: :once]
+    use Ecspanse.Template.Component.Timer,
+      state: [
+        duration: 30 * 1000,
+        time: 30 * 1000,
+        event: IST.Events.EvasionTimerComplete,
+        mode: :once
+      ]
   end
 end

@@ -209,6 +209,8 @@ defmodule IST.Systems.DealDamage do
   defp add_hunter_points(event, points) do
     {:ok, hunter_level} = Query.fetch_component(event.hunter_entity, IST.Components.Level)
 
+    Ecspanse.event({IST.Events.GotPoints, ship_id: event.hunter_id}, batch_key: event.hunter_id)
+
     {hunter_level,
      points: hunter_level.points + points,
      current_level_up_points: hunter_level.current_level_up_points + points}

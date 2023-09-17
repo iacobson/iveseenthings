@@ -85,6 +85,14 @@ defmodule IST.Events do
       ]
   end
 
+  defmodule GotPoints do
+    @moduledoc """
+    The player got points.
+    """
+
+    use Ecspanse.Event, fields: [:ship_id]
+  end
+
   defmodule EnergyTimerComplete do
     @moduledoc """
     The energy timer has reached zero.
